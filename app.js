@@ -22,19 +22,19 @@ app.get("/home", (req, res) => {
 
 app.post("/create", (req, res) => {
     const id = req.body.id.replaceAll(/\s/g, "").replaceAll(" ", "");
-    if (!games.includes((game) => game.id === id)) {
+    if (games.some((game) => game.id === id)) {
+        res.redirect("/home");
+    } else {
         const game = new GAME(id);
         games.push(game);
         res.redirect("/game/" + game.id);
-    } else {
-        res.redirect("/home");
     }
 });
 
 app.get("/game/:id", (req, res) => {
     const id = req.params.id;
     const game = games.find((game) => game.id === id);
-    if (game && !game.isFull()) {
+    if (game && !game.IsFull()) {
         res.render("game", game);
     } else {
         res.redirect("/home");
@@ -46,10 +46,10 @@ app.use((req, res) => {
 });
 
 server.on("upgrade", (req, socket, head) => {
-    const id = request.url.slice(1);
+    const id = req.url.slice(1);
     const game = games.find((game) => game.id === id);
-    game.server.handleUpgrade(req, socket, head, (ws) => {
-        game.server.emit("connection", ws, socket);
+    game.wss.handleUpgrade(req, socket, head, (ws) => {
+        game.wss.emit("connection", ws, socket);
     });
 })
 
