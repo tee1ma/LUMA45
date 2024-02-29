@@ -22,6 +22,7 @@ class GAME {
                 console.log("Player connected");
                 const newPlayer = new PLAYER(ws);
                 this.players.push(newPlayer);
+                if (this.players.length === 1) { newPlayer.admin = true; }
                 this.UpdatePlayerList();
 
                 ws.on("close", () => {
@@ -29,6 +30,8 @@ class GAME {
                     this.players.splice(this.players.findIndex((player) => player === newPlayer), 1);
                     if (this.players.length === 0) {
                         //Close the server here
+                    } else if (newPlayer.admin) {
+                        this.players[0].admin = true;
                     }
                     this.UpdatePlayerList();
                 });
