@@ -11,4 +11,16 @@ body {
     background-image: url("/backpic.png");
     background-size: 192px;
     background-repeat: repeat;
+}@font-face {
+    font-family: 'Press Start 2P';
+    src: url('/fonttibeibi.ttf');
+ 
+}
+
+body {
+    font-family: 'Press Start 2P', sans-serif;
+}
+
+table, th, td {
+    font-family: 'Press Start 2P', sans-serif;
 }
