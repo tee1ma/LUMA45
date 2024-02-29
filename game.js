@@ -61,7 +61,10 @@ class GAME {
     OnWsMessage(type, data, ws) {
         switch (type) {
             case "NICKNAME":
-                if (data == null || data == "") { data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString() }
+                if (data == null || data == "" || this.players.find((player) => player.nickname === data)) {
+                    data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
+                    ws.send(JSON.stringify(["YOURNAME", data]));
+                }
                 this.players.find((player) => player.ws === ws).nickname = data;
                 this.UpdatePlayerList();
                 break;

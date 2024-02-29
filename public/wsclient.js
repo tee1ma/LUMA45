@@ -1,4 +1,6 @@
 let ws;
+let playername;
+
 function ConnectToServer(playername) {
     const host = window.location.hostname;
     const port = window.location.port;
@@ -17,6 +19,7 @@ function ConnectToServer(playername) {
 
 function HandleMessage(eventType, eventData) {
     switch (eventType) {
+
         case "PLAYERLIST":
             const playerlist = document.getElementById("playerlist");
 
@@ -25,6 +28,7 @@ function HandleMessage(eventType, eventData) {
             }
 
             eventData.forEach((player) => {
+                const row = document.createElement("tr");
                 const nickname = document.createElement("td");
                 nickname.innerText = player.nickname;
                 const startingPoints = document.createElement("td");
@@ -33,16 +37,22 @@ function HandleMessage(eventType, eventData) {
                 if (player.admin === true) {
                     admin.innerText = "admin";
                 }
-
-                const row = document.createElement("tr");
+                if (player.nickname === playername) {
+                    row.style.backgroundColor = "gray";
+                }
                 playerlist.appendChild(row);
                 row.appendChild(nickname);
                 row.appendChild(startingPoints);
                 row.appendChild(admin);
             });
             break;
+
+        case "YOURNAME":
+            playername = eventData;
+            break;
+
     }
 }
 
-const playername = window.prompt("Choose a nickname: ", "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString());
+playername = window.prompt("Choose a nickname: ", "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString());
 ConnectToServer(playername);

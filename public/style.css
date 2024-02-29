@@ -1,7 +1,13 @@
 img {
     image-rendering: pixelated;
-};
+}
 img#logo {
     width: 64px;
     height: 64px;
+}
+body {
+    background-color: #3F4454;
+    background-image: url("/backpic.png");
+    background-size: 192px;
+    background-repeat: repeat;
 }
