@@ -7,6 +7,7 @@ img#logo {
 }
 body {
     background-color: #3F4454;
+    image-rendering: pixelated;
     background-image: url("/backpic.png");
     background-size: 192px;
     background-repeat: repeat;
