@@ -53,7 +53,7 @@ server.on("upgrade", (req, socket, head) => {
     });
 })
 
-const port = 80;
+const port = 8080;
 server.listen(port, () => {
     console.log("Server running on port", port)
 });
