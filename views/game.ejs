@@ -10,6 +10,22 @@
     <script src="/wsclient.js" defer></script>
 </head>
 <body>
-    <h1><%= id %></h1>
+    <header>
+        <a href="/home">home</a>
+        <h1><%= id %></h1>
+    </header>
+    <table>
+        <thead>
+            <tr>
+                <th>Nickname</th>
+                <th>Points</th>
+            </tr>
+        </thead>
+        <tbody id="playerlist"></tbody>
+    </table>
+    <div>
+        <input type="range" min="1" max="100" value="0" id="slider">
+        <button onclick="">confirm</button>
+    </div>
 </body>
 </html>

@@ -4,6 +4,9 @@ class GAME {
     constructor(id) {
         this.id = id;
         this.maxPlayers = 10;
+        this.startingStack = 100;
+        this.hasStarted = false;
+        this.rounds = [9, 10, 11, 12, 13, 14, 15];
         this.players = [];
         this.wss = new WebSocket.WebSocketServer({ noServer: true });
         this.HandleWSS(this.wss);
@@ -16,9 +19,10 @@ class GAME {
                 console.log("Connection denied. Server is full!");
                 socket.destroy();
             } else {
-                console.log()
+                console.log("Player connected");
                 const newPlayer = new PLAYER(ws);
                 this.players.push(newPlayer);
+                this.UpdatePlayerList();
 
                 ws.on("close", () => {
                     console.log("Player left the server");
@@ -26,19 +30,60 @@ class GAME {
                     if (this.players.length === 0) {
                         //Close the server here
                     }
+                    this.UpdatePlayerList();
                 });
 
                 ws.on("message", (message) => {
                     console.log(`(${this.id}) new message recieved: ${message}`);
+                    const wsmessage = JSON.parse(message);
+                    this.OnWsMessage(wsmessage[0], wsmessage[1], ws);
                 });
 
             }
         })
     }
+    SendToClients(data) {
+        this.players.forEach((player) => {
+            player.ws.send(JSON.stringify(data));
+        })
+    }
+    UpdatePlayerList() {
+        const playerlist = [];
+        this.players.forEach((player) => {
+            playerlist.push(player.PublicInfo());
+        })
+        this.SendToClients(["PLAYERLIST", playerlist]);
+    }
+
+    OnWsMessage(type, data, ws) {
+        switch (type) {
+            case "NICKNAME":
+                if (data == null || data == "") { data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString() }
+                this.players.find((player) => player.ws === ws).nickname = data;
+                this.UpdatePlayerList();
+                break;
+        }
+    }
+
+    
 }
 class PLAYER {
     constructor(ws){
+        this.nickname = "guest";
         this.ws = ws;
+        this.pointsInHand;
+        this.startingPoints = 100;
+        this.pointsWon = [];
+        this.admin = false;
+    }
+    PublicInfo() {
+        const playerinfo = {
+            nickname: this.nickname,
+            startingPoints: this.startingPoints,
+            pointsWon: this.pointsWon,
+            admin: this.admin
+        }
+        return playerinfo;
     }
 }
 
