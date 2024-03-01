@@ -34,7 +34,7 @@ app.post("/create", (req, res) => {
 app.get("/game/:id", (req, res) => {
     const id = req.params.id;
     const game = games.find((game) => game.id === id);
-    if (game && !game.IsFull()) {
+    if (game && !game.IsFull() && !game.hasStarted) {
         res.render("game", game);
     } else {
         res.redirect("/home");

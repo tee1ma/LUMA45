@@ -72,6 +72,7 @@ class GAME {
 
             case "STARTGAME":
                 this.hasStarted = true;
+                this.UpdatePlayerList();
                 break;
 
             case "BID":
