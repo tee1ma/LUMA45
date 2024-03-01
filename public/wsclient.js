@@ -59,6 +59,10 @@ function HandleMessage(eventType, eventData) {
             playername = eventData;
             break;
 
+        case "STARTGAME":
+            gameStarted = true;
+            break;
+
     }
 }
 

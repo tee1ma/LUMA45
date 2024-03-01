@@ -72,6 +72,7 @@ class GAME {
 
             case "STARTGAME":
                 this.hasStarted = true;
+                this.SendToClients(JSON.stringify(["STARTGAME", "options"]))
                 this.UpdatePlayerList();
                 break;
 
