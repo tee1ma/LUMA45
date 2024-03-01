@@ -3,16 +3,43 @@ const WebSocket = require("ws");
 class GAME {
     constructor(id) {
         this.id = id;
-        this.maxPlayers = 10;
+        this.maxPlayers = 20;
         this.startingStack = 100;
         this.hasStarted = false;
         this.timer = 10;
-        this.rounds = [9, 10, 11, 12, 13, 14, 15];
         this.players = [];
         this.wss = new WebSocket.WebSocketServer({ noServer: true });
         this.HandleWSS(this.wss);
     }
     IsFull() { return this.players.length >= this.maxPlayers; }
+
+    CreateRounds(amount) {
+        const remainder = 1000 % amount;
+        const base = (1000 - remainder) / amount;
+        const step = Math.floor(40 / amount);
+        let rounds = [];
+        for (let i = amount; i >= 0; i--) {
+            if (i === amount / 2) { i--; }
+            const permil = base + (step * (i - (amount / 2)));
+            rounds.push(permil);
+        }
+        rounds[0]+= remainder;
+        return rounds;
+    }
+
+    StartGame() {
+        this.hasStarted = true;
+        this.players.forEach((player) => {
+            player.busted = false;
+        });
+        this.SendToClients(["STARTGAME", rounds]);
+    }
+    MainLoop() {
+
+    }
+    RoundLoop() {
+        
+    }
 
     HandleWSS(wss) {
         wss.on("connection", (ws, socket) => {
@@ -71,8 +98,7 @@ class GAME {
                 break;
 
             case "STARTGAME":
-                this.hasStarted = true;
-                this.SendToClients(["STARTGAME", "options"]);
+                this.StartGame();
                 break;
 
             case "BID":
@@ -86,10 +112,12 @@ class PLAYER {
     constructor(ws){
         this.nickname = "guest";
         this.ws = ws;
-        this.pointsInHand;
-        this.startingPoints = 100;
+        this.pointsLeft;
+        this.pointsBid;
+        this.startingPoints;
         this.pointsWon = [];
         this.admin = false;
+        this.busted = false;
     }
     PublicInfo() {
         const playerinfo = {
