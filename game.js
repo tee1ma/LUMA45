@@ -6,6 +6,7 @@ class GAME {
         this.maxPlayers = 10;
         this.startingStack = 100;
         this.hasStarted = false;
+        this.timer = 10;
         this.rounds = [9, 10, 11, 12, 13, 14, 15];
         this.players = [];
         this.wss = new WebSocket.WebSocketServer({ noServer: true });
@@ -61,12 +62,19 @@ class GAME {
     OnWsMessage(type, data, ws) {
         switch (type) {
             case "NICKNAME":
-                if (data == null || data == "" || this.players.find((player) => player.nickname === data)) {
+                if (data == null || data.replaceAll(/\s/g, "").replaceAll(" ", "").length < 2 || this.players.find((player) => player.nickname === data)) {
                     data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
                     ws.send(JSON.stringify(["YOURNAME", data]));
                 }
                 this.players.find((player) => player.ws === ws).nickname = data;
                 this.UpdatePlayerList();
+                break;
+
+            case "STARTGAME":
+                this.hasStarted = true;
+                break;
+
+            case "BID":
                 break;
         }
     }
