@@ -32,13 +32,18 @@ class GAME {
         this.players.forEach((player) => {
             player.busted = false;
         });
-        this.SendToClients(["STARTGAME", rounds]);
+        this.SendToClients(["STARTGAME"]);
+        setTimeout(() => {
+            while(this.players.filter((player) => player.busted = false).length > 1) {
+                this.MainLoop();
+            }
+        }, 3000);
     }
     MainLoop() {
-
+        
     }
     RoundLoop() {
-        
+
     }
 
     HandleWSS(wss) {
