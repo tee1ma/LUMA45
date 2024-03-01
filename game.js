@@ -15,7 +15,7 @@ class GAME {
 
     HandleWSS(wss) {
         wss.on("connection", (ws, socket) => {
-            if (this.IsFull()) {
+            if (this.IsFull() || this.hasStarted) {
                 console.log("Connection denied. Server is full!");
                 socket.destroy();
             } else {

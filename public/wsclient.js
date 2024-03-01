@@ -1,5 +1,6 @@
 let ws;
 let playername;
+let gameStarted = false;
 
 function ConnectToServer(playername) {
     const host = window.location.hostname;
@@ -34,11 +35,18 @@ function HandleMessage(eventType, eventData) {
                 const startingPoints = document.createElement("td");
                 startingPoints.innerText = player.startingPoints;
                 const admin = document.createElement("td");
-                if (player.admin === true) {
+                if (player.admin) {
                     admin.innerText = "admin";
                 }
                 if (player.nickname === playername) {
                     row.style.backgroundColor = "gray";
+                    if (!gameStarted) {
+                        if (player.admin) {
+                            SetInputs("admin");
+                        } else {
+                            SetInputs("hidden");
+                        }
+                    }
                 }
                 playerlist.appendChild(row);
                 row.appendChild(nickname);
@@ -54,5 +62,39 @@ function HandleMessage(eventType, eventData) {
     }
 }
 
-playername = window.prompt("Choose a nickname: ", "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString());
+function SendWs() {
+    if (gameStarted) {
+        const bidAmount = document.getElementById("slider").value;
+        ws.send(JSON.stringify(["BID", bidAmount]));
+    } else {
+        ws.send(JSON.stringify(["STARTGAME"]));
+    }
+}
+
+function SetInputs(state) {
+
+    const slider = document.getElementById("slider");
+    const bidButton = document.getElementById("bidButton");
+
+    switch (state) {
+        case "hidden":
+            slider.style.visibility = "hidden";
+            bidButton.style.visibility = "hidden";
+            break;
+        case "disabled":
+            break;
+        case "admin":
+            slider.style.visibility = "hidden";
+            bidButton.style.visibility = "visible";
+            bidButton.innerText = "start game";
+            break;
+        case "enabled":
+            slider.style.visibility = "visible";
+            bidButton.style.visibility = "visible";
+            bidButton.innerText = "bid";
+            break;
+    }
+}
+
+playername = window.prompt("Choose a nickname:");
 ConnectToServer(playername);
