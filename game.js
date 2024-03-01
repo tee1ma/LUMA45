@@ -72,8 +72,7 @@ class GAME {
 
             case "STARTGAME":
                 this.hasStarted = true;
-                this.SendToClients(["STARTGAME", "options"])
-                this.UpdatePlayerList();
+                this.SendToClients(["STARTGAME", "options"]);
                 break;
 
             case "BID":

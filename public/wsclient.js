@@ -61,6 +61,7 @@ function HandleMessage(eventType, eventData) {
 
         case "STARTGAME":
             gameStarted = true;
+            SetInputs("enabled");
             break;
 
     }
