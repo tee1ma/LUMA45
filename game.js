@@ -13,37 +13,68 @@ class GAME {
     }
     IsFull() { return this.players.length >= this.maxPlayers; }
 
-    CreateRounds(amount) {
+    CreatePrizes(amount, totalPoints) {
         const remainder = 1000 % amount;
         const base = (1000 - remainder) / amount;
         const step = Math.floor(40 / amount);
-        let rounds = [];
+        let prizes = [];
         for (let i = amount; i >= 0; i--) {
             if (i === amount / 2) { i--; }
             const permil = base + (step * (i - (amount / 2)));
-            rounds.push(permil);
+            const prize = totalPoints * permil / 1000;
+            prizes.push(prize);
         }
-        rounds[0]+= remainder;
-        return rounds;
+        prizes[0]+= remainder;
+        return prizes;
+    }
+
+    SelectWinner() {
+        const winner = this.players.filter((player) => !player.busted).reduce((a, b) => {
+            return a.pointsBid > b.pointsBid ? a : b;
+        });
+        return winner;
     }
 
     StartGame() {
         this.hasStarted = true;
         this.players.forEach((player) => {
             player.busted = false;
+            player.pointsWon = [this.startingStack];
+            player.startingPoints = 0;
         });
         this.SendToClients(["STARTGAME"]);
+        let prizeAmount = this.players.length * 2;
+        const totalPoints = this.players.length * this.startingStack;
         setTimeout(() => {
-            while(this.players.filter((player) => player.busted = false).length > 1) {
-                this.MainLoop();
+            while(this.players.filter((player) => !player.busted).length > 1 && prizeAmount > 0) {
+                this.MainLoop(this.CreatePrizes(prizeAmount, totalPoints));
+                prizeAmount -= 2;
             }
         }, 3000);
     }
-    MainLoop() {
-        
-    }
-    RoundLoop() {
+    MainLoop(prizes) {
 
+        this.players.forEach((player) => { player.NewRoundReset(); });
+        this.UpdatePlayerList();
+        this.SendToClients(["PRIZES", prizes]);
+
+        prizes.forEach(function(prize, index) { 
+
+            this.players.forEach((player) => { player.pointsBid = 0; });
+            this.SendToClients(["STARTBIDDING", index]);
+
+            //Wait 10 seconds
+
+            const winner = this.SelectWinner();
+            winner.pointsWon.push(prize);
+            this.SendToClients(["WINNER", [winner.nickname, prize, winner.pointsBid]]);
+            this.players.forEach((player) => {
+                player.pointsLeft -= player.pointsBid;
+                player.pointsBid = 0;
+            });
+
+        });
+        console.log("mainloop completed");
     }
 
     HandleWSS(wss) {
@@ -70,7 +101,7 @@ class GAME {
                 });
 
                 ws.on("message", (message) => {
-                    console.log(`(${this.id}) new message recieved: ${message}`);
+                    console.log(`(${this.id}) recieved: ${message}`);
                     const wsmessage = JSON.parse(message);
                     this.OnWsMessage(wsmessage[0], wsmessage[1], ws);
                 });
@@ -78,7 +109,11 @@ class GAME {
             }
         })
     }
+    CloseWSS(wss){
+
+    }
     SendToClients(data) {
+        console.log(`(${this.id}) sent ${JSON.stringify(data)}`);
         this.players.forEach((player) => {
             player.ws.send(JSON.stringify(data));
         })
@@ -103,10 +138,14 @@ class GAME {
                 break;
 
             case "STARTGAME":
-                this.StartGame();
+                if (this.players.length > 1) {
+                    this.StartGame();
+                }
                 break;
 
             case "BID":
+                const bidder = this.players.find((player) => player.ws = ws);
+                bidder.Bid(data);
                 break;
         }
     }
@@ -119,7 +158,7 @@ class PLAYER {
         this.ws = ws;
         this.pointsLeft;
         this.pointsBid;
-        this.startingPoints;
+        this.startingPoints = 0;
         this.pointsWon = [];
         this.admin = false;
         this.busted = false;
@@ -129,9 +168,26 @@ class PLAYER {
             nickname: this.nickname,
             startingPoints: this.startingPoints,
             pointsWon: this.pointsWon,
-            admin: this.admin
+            admin: this.admin,
+            busted: this.busted
         }
         return playerinfo;
+    }
+    NewRoundReset() {
+        if (this.pointsWon.length === 0) { this.busted = true; }
+        if (this.busted) { this.startingPoints = 0; }
+        else {
+            this.startingPoints = this.pointsWon.reduce((a, b) => { return a+b; }, 0);
+            this.pointsLeft = this.startingPoints;
+            this.pointsWon = [];
+        }
+    }
+    Bid(amount) {
+        if (this.pointsLeft > amount && amount > 0) {
+            this.pointsBid = amount;
+        } else {
+            this.pointsBid = 0;
+        }
     }
 }
 
