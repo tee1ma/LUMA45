@@ -70,7 +70,7 @@ function HandleMessage(eventType, eventData) {
 function SendWs() {
     if (gameStarted) {
         const bidAmount = document.getElementById("slider").value;
-        ws.send(JSON.stringify(["BID", bidAmount]));
+        ws.send(JSON.stringify(["BID", parseInt(bidAmount)]));
     } else {
         ws.send(JSON.stringify(["STARTGAME"]));
     }

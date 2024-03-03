@@ -18,8 +18,8 @@ class GAME {
         const base = (1000 - remainder) / amount;
         const step = Math.floor(40 / amount);
         let prizes = [];
-        for (let i = amount; i >= 0; i--) {
-            if (i === amount / 2) { i--; }
+        for (let i = 0; i <= amount; i++) {
+            if (i === amount / 2) { i++; }
             const permil = base + (step * (i - (amount / 2)));
             const prize = totalPoints * permil / 1000;
             prizes.push(prize);
@@ -28,11 +28,12 @@ class GAME {
         return prizes;
     }
 
-    SelectWinner() {
-        const winner = this.players.filter((player) => !player.busted).reduce((a, b) => {
+    SelectWinners() {
+        const players = this.players.filter((player) => !player.busted);
+        const max = players.reduce((a, b) => {
             return a.pointsBid > b.pointsBid ? a : b;
-        });
-        return winner;
+        }).pointsBid;
+        return players.filter(player => player.pointsBid === max);
     }
 
     StartGame() {
@@ -41,40 +42,71 @@ class GAME {
             player.busted = false;
             player.pointsWon = [this.startingStack];
             player.startingPoints = 0;
+            player.pointsBid = 0;
         });
         this.SendToClients(["STARTGAME"]);
-        let prizeAmount = this.players.length * 2;
-        const totalPoints = this.players.length * this.startingStack;
+
         setTimeout(() => {
-            while(this.players.filter((player) => !player.busted).length > 1 && prizeAmount > 0) {
-                this.MainLoop(this.CreatePrizes(prizeAmount, totalPoints));
-                prizeAmount -= 2;
-            }
-        }, 3000);
-    }
-    MainLoop(prizes) {
-
-        this.players.forEach((player) => { player.NewRoundReset(); });
-        this.UpdatePlayerList();
-        this.SendToClients(["PRIZES", prizes]);
-
-        prizes.forEach(function(prize, index) { 
-
+            //A
+            this.players.forEach((player) => { player.NewRoundReset(); });
+            this.UpdatePlayerList();
+            const totalPoints = this.players.length * this.startingStack;
+            const prizes = this.CreatePrizes(this.players.length * 2, totalPoints);
+            this.SendToClients(["PRIZES", prizes]);
             this.players.forEach((player) => { player.pointsBid = 0; });
-            this.SendToClients(["STARTBIDDING", index]);
+            this.SendToClients(["STARTBIDDING", 0]);
 
-            //Wait 10 seconds
+            setTimeout(() => {
+                this.MainLoop(0, prizes, totalPoints);
+            }, this.timer * 1000)
+        }, 3000);
 
-            const winner = this.SelectWinner();
-            winner.pointsWon.push(prize);
-            this.SendToClients(["WINNER", [winner.nickname, prize, winner.pointsBid]]);
-            this.players.forEach((player) => {
-                player.pointsLeft -= player.pointsBid;
-                player.pointsBid = 0;
-            });
+    }
 
+    MainLoop(bettingRound, prizes, totalPoints) {
+
+        //B
+        const winners = this.SelectWinners();
+        let winnernames = [];
+        winners.forEach((winner) => {
+            winner.pointsWon.push(prizes[bettingRound] / winners.length);
+            winnernames.push(winner.nickname);
         });
-        console.log("mainloop completed");
+        this.SendToClients(["ROUNDWINNER", [winnernames, prizes[bettingRound] / winners.length, winners[0].pointsBid]]);
+
+        this.players.forEach((player) => { player.pointsLeft -= player.pointsBid; });
+
+        if (bettingRound === prizes.length - 1) { bettingRound = 0; }
+        else { bettingRound++; }
+
+        if (bettingRound === 0) {
+            this.players.forEach((player) => { player.NewRoundReset(); });
+            this.UpdatePlayerList();
+            if (prizes.length > 2) {
+                prizes = this.CreatePrizes(prizes.length - 2, totalPoints);
+                this.SendToClients(["PRIZES", prizes]);
+            } else {
+                prizes = [];
+            }
+        }
+
+        if (this.players.filter(player => !player.busted).length > 1 && prizes.length > 0) {
+            //A
+            this.players.forEach((player) => { player.pointsBid = 0; });
+            this.SendToClients(["STARTBIDDING", bettingRound]);
+
+            setTimeout(() => {
+                this.MainLoop(bettingRound, prizes, totalPoints); 
+            }, this.timer * 1000);
+        } else {
+            this.hasStarted = false;
+
+            const players = this.players.filter((player) => !player.busted);
+            const winner = players.reduce((a, b) => {
+                return a.startingPoints > b.startingPoints ? a : b;
+            });
+            this.SendToClients(["GAMEWINNER", winner.nickname]);
+        }
     }
 
     HandleWSS(wss) {
@@ -144,7 +176,7 @@ class GAME {
                 break;
 
             case "BID":
-                const bidder = this.players.find((player) => player.ws = ws);
+                const bidder = this.players.find((player) => player.ws === ws);
                 bidder.Bid(data);
                 break;
         }
