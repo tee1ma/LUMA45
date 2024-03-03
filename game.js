@@ -18,8 +18,8 @@ class GAME {
         const base = (1000 - remainder) / amount;
         const step = Math.floor(40 / amount);
         let prizes = [];
-        for (let i = 0; i <= amount; i++) {
-            if (i === amount / 2) { i++; }
+        for (let i = amount; i >= 0; i--) {
+            if (i === amount / 2) { i--; }
             const permil = base + (step * (i - (amount / 2)));
             const prize = totalPoints * permil / 1000;
             prizes.push(prize);

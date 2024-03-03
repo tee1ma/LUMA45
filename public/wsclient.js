@@ -62,6 +62,20 @@ function HandleMessage(eventType, eventData) {
         case "STARTGAME":
             gameStarted = true;
             SetInputs("enabled");
+            alert("Game has started");
+            break;
+        
+        case "PRIZES":
+            
+            break;
+        
+        case "STARTBIDDING":
+            break;
+
+        case "ROUNDWINNER":
+            break;
+        
+        case "GAMEWINNER":
             break;
 
     }
