@@ -1,6 +1,7 @@
 let ws;
 let playername;
 let gameStarted = false;
+let timer;
 
 function ConnectToServer(playername) {
     const host = window.location.hostname;
@@ -19,6 +20,7 @@ function ConnectToServer(playername) {
 }
 
 function HandleMessage(eventType, eventData) {
+    const roundsContainer = document.getElementById("roundsContainer");
     switch (eventType) {
 
         case "PLAYERLIST":
@@ -35,6 +37,8 @@ function HandleMessage(eventType, eventData) {
                 const startingPoints = document.createElement("td");
                 startingPoints.innerText = player.startingPoints;
                 const admin = document.createElement("td");
+                const pointsWon = document.createElement("td");
+                pointsWon.innerText = JSON.stringify(player.pointsWon);
                 if (player.admin) {
                     admin.innerText = "admin";
                 }
@@ -48,10 +52,12 @@ function HandleMessage(eventType, eventData) {
                         }
                     }
                 }
+                else if (player.busted) { row.style.backgroundColor = "red"; }
                 playerlist.appendChild(row);
                 row.appendChild(nickname);
                 row.appendChild(startingPoints);
                 row.appendChild(admin);
+                row.appendChild(pointsWon);
             });
             break;
 
@@ -61,21 +67,44 @@ function HandleMessage(eventType, eventData) {
 
         case "STARTGAME":
             gameStarted = true;
-            SetInputs("enabled");
             alert("Game has started");
+            timer = eventData;
             break;
         
         case "PRIZES":
-            
+            while (roundsContainer.firstChild) {
+                roundsContainer.removeChild(roundsContainer.firstChild);
+            }
+
+            eventData.forEach((prize) => {
+                const prizeElement = document.createElement("div");
+                prizeElement.innerText = prize;
+                roundsContainer.appendChild(prizeElement);
+            })
             break;
         
         case "STARTBIDDING":
+            SetInputs("enabled");
+            roundsContainer.children[eventData].style.backgroundColor = "gray";
+            
+            const progressBar = document.getElementById("progressBar");
+            let counter = timer;
+            const timerinterval = setInterval(() => {
+                if (counter === 0) { clearInterval(timerinterval) }
+                progressBar.innerText = counter;
+                counter--;
+            }, 1000)
             break;
 
         case "ROUNDWINNER":
+            alert(`${eventData[1]} won by ${eventData[0]} with a bid of ${eventData[2]}`);
             break;
         
         case "GAMEWINNER":
+            while (roundsContainer.firstChild) {
+                roundsContainer.removeChild(roundsContainer.firstChild);
+            }
+            alert("Game has ended. Winner is: " + eventData);
             break;
 
     }
@@ -83,31 +112,49 @@ function HandleMessage(eventType, eventData) {
 
 function SendWs() {
     if (gameStarted) {
-        const bidAmount = document.getElementById("slider").value;
-        ws.send(JSON.stringify(["BID", parseInt(bidAmount)]));
+        const bidAmount = parseInt(document.getElementById("slider").value);
+        ws.send(JSON.stringify(["BID", bidAmount]));
+
+        const slider = document.getElementById("slider");
+        slider.max = (parseInt(slider.max) - bidAmount);
+        slider.value = "0";
+
+        SetInputs("disabled");
     } else {
         ws.send(JSON.stringify(["STARTGAME"]));
     }
+}
+
+function MatchInput(changedElement, correspondingElement) {
+    correspondingElement.value = changedElement.value;
+    correspondingElement.max = changedElement.max;
 }
 
 function SetInputs(state) {
 
     const slider = document.getElementById("slider");
     const bidButton = document.getElementById("bidButton");
+    const inputBox = document.getElementById("inputBox");
 
     switch (state) {
         case "hidden":
             slider.style.visibility = "hidden";
             bidButton.style.visibility = "hidden";
+            inputBox.style.visibility = "hidden";
             break;
         case "disabled":
+            slider.style.visibility = "visible";
+            bidButton.style.visibility = "hidden";
+            inputBox.style.visibility = "visible";
             break;
         case "admin":
+            inputBox.style.visibility = "hidden";
             slider.style.visibility = "hidden";
             bidButton.style.visibility = "visible";
             bidButton.innerText = "start game";
             break;
         case "enabled":
+            inputBox.style.visibility = "visible";
             slider.style.visibility = "visible";
             bidButton.style.visibility = "visible";
             bidButton.innerText = "bid";

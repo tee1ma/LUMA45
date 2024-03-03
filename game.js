@@ -4,9 +4,9 @@ class GAME {
     constructor(id) {
         this.id = id;
         this.maxPlayers = 20;
-        this.startingStack = 100;
+        this.startingStack = 1000;
         this.hasStarted = false;
-        this.timer = 10;
+        this.timer = 30;
         this.players = [];
         this.wss = new WebSocket.WebSocketServer({ noServer: true });
         this.HandleWSS(this.wss);
@@ -18,8 +18,8 @@ class GAME {
         const base = (1000 - remainder) / amount;
         const step = Math.floor(40 / amount);
         let prizes = [];
-        for (let i = amount; i >= 0; i--) {
-            if (i === amount / 2) { i--; }
+        for (let i = 0; i <= amount; i++) {
+            if (i === amount / 2) { i++; }
             const permil = base + (step * (i - (amount / 2)));
             const prize = totalPoints * permil / 1000;
             prizes.push(prize);
@@ -44,7 +44,7 @@ class GAME {
             player.startingPoints = 0;
             player.pointsBid = 0;
         });
-        this.SendToClients(["STARTGAME"]);
+        this.SendToClients(["STARTGAME", this.timer]);
 
         setTimeout(() => {
             //A
@@ -73,6 +73,7 @@ class GAME {
             winnernames.push(winner.nickname);
         });
         this.SendToClients(["ROUNDWINNER", [winnernames, prizes[bettingRound] / winners.length, winners[0].pointsBid]]);
+        this.UpdatePlayerList();
 
         this.players.forEach((player) => { player.pointsLeft -= player.pointsBid; });
 
