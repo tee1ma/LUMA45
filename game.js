@@ -73,11 +73,6 @@ class GAME {
 
         //B
         const winners = this.SelectWinners(prizes[bettingRound]);
-        let winnernames = [];
-        winners.forEach((winner) => {
-            winner.pointsWon.push(prizes[bettingRound] / winners.length);
-            winnernames.push(winner.nickname);
-        });
         this.SendToClients(["ROUNDWINNER", [winnernames, prizes[bettingRound] / winners.length, winners[0].pointsBid]]);
         this.UpdatePlayerList();
 
