@@ -28,12 +28,18 @@ class GAME {
         return prizes;
     }
 
-    SelectWinners() {
+    SelectWinners(prize) {
         const players = this.players.filter((player) => !player.busted);
         const max = players.reduce((a, b) => {
             return a.pointsBid > b.pointsBid ? a : b;
         }).pointsBid;
-        return players.filter(player => player.pointsBid === max);
+        const winners = players.filter(player => player.pointsBid === max);
+        let winnernames = [];
+        winners.forEach((winner) => {
+            winner.pointsWon.push(Math.floor(prize / winners.length));
+            winnernames.push(winner.nickname);
+        });
+        return 
     }
 
     StartGame() {
@@ -66,7 +72,7 @@ class GAME {
     MainLoop(bettingRound, prizes, totalPoints) {
 
         //B
-        const winners = this.SelectWinners();
+        const winners = this.SelectWinners(prizes[bettingRound]);
         let winnernames = [];
         winners.forEach((winner) => {
             winner.pointsWon.push(prizes[bettingRound] / winners.length);
