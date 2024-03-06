@@ -73,7 +73,7 @@ class GAME {
 
         //B
         const winners = this.SelectWinners(prizes[bettingRound]);
-        this.SendToClients(["ROUNDWINNER", [winners, prizes[bettingRound] / winners.length, this.players.find(player => player.nickname === winners[0]).pointsBid]]);
+        this.SendToClients(["ROUNDWINNER", [winners, Math.floor(prizes[bettingRound] / winners.length), this.players.find(player => player.nickname === winners[0]).pointsBid]]);
         this.UpdatePlayerList();
 
         this.players.forEach((player) => { player.pointsLeft -= player.pointsBid; });
@@ -217,7 +217,7 @@ class PLAYER {
         }
     }
     Bid(amount) {
-        if (this.pointsLeft > amount && amount > 0) {
+        if (this.pointsLeft >= amount && amount > 0) {
             this.pointsBid = amount;
         } else {
             this.pointsBid = 0;
