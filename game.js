@@ -39,7 +39,7 @@ class GAME {
             winner.pointsWon.push(Math.floor(prize / winners.length));
             winnernames.push(winner.nickname);
         });
-        return 
+        return winnernames;
     }
 
     StartGame() {
@@ -73,7 +73,7 @@ class GAME {
 
         //B
         const winners = this.SelectWinners(prizes[bettingRound]);
-        this.SendToClients(["ROUNDWINNER", [winnernames, prizes[bettingRound] / winners.length, winners[0].pointsBid]]);
+        this.SendToClients(["ROUNDWINNER", [winners, prizes[bettingRound] / winners.length, winners[0].pointsBid]]);
         this.UpdatePlayerList();
 
         this.players.forEach((player) => { player.pointsLeft -= player.pointsBid; });
