@@ -120,12 +120,15 @@ function HandleMessage(eventType, eventData) {
 
 function SendWs() {
     if (gameStarted) {
-        const bidAmount = parseInt(document.getElementById("slider").value);
+        const bidAmount = parseInt(document.getElementById("inputBox").value);
         ws.send(JSON.stringify(["BID", bidAmount]));
 
         const slider = document.getElementById("slider");
         slider.max = (parseInt(slider.max) - bidAmount);
         slider.value = "0";
+        const inputBox = document.getElementById("inputBox");
+        inputBox.max = (parseInt(inputBox.max) - bidAmount);
+        inputBox.value = "0";
 
         SetInputs("disabled");
     } else {
