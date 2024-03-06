@@ -2,6 +2,7 @@ let ws;
 let playername;
 let gameStarted = false;
 let timer;
+let playerStartingPoints;
 
 function ConnectToServer(playername) {
     const host = window.location.hostname;
@@ -44,6 +45,7 @@ function HandleMessage(eventType, eventData) {
                 }
                 if (player.nickname === playername) {
                     row.style.backgroundColor = "gray";
+                    playerStartingPoints = player.startingPoints;
                     if (!gameStarted) {
                         if (player.admin) {
                             SetInputs("admin");
@@ -80,7 +82,12 @@ function HandleMessage(eventType, eventData) {
                 const prizeElement = document.createElement("div");
                 prizeElement.innerText = prize;
                 roundsContainer.appendChild(prizeElement);
-            })
+            });
+            
+            const slider = document.getElementById("slider");
+            slider.max = playerStartingPoints;
+            slider.value = "0";
+
             break;
         
         case "STARTBIDDING":
@@ -101,6 +108,7 @@ function HandleMessage(eventType, eventData) {
             break;
         
         case "GAMEWINNER":
+            gameStarted = false;
             while (roundsContainer.firstChild) {
                 roundsContainer.removeChild(roundsContainer.firstChild);
             }
