@@ -1,8 +1,8 @@
 let ws;
 let playername;
 let gameStarted = false;
-let timer;
 let playerStartingPoints;
+let timer;
 
 function ConnectToServer(playername) {
   const host = window.location.hostname;
@@ -73,7 +73,7 @@ function HandleMessage(eventType, eventData) {
     case "STARTGAME":
       gameStarted = true;
       alert("Game has started");
-      timer = eventData;
+      document.getElementById("timer").max = eventData * 1000;
       break;
 
     case "PRIZES":
@@ -95,8 +95,13 @@ function HandleMessage(eventType, eventData) {
 
     case "STARTBIDDING":
       SetInputs("enabled");
-      document.getElementById("readyCounter").innerText = "";
+      // document.getElementById("readyCounter").innerText = "";
       roundsContainer.children[eventData].style.backgroundColor = "gray";
+      document.getElementById("timer").value = 0;
+      if (timer) { clearInterval(timer); }
+      timer = setInterval(() => {
+        document.getElementById("timer").value++;
+      }, 1);
       break;
 
     case "ROUNDWINNER":
@@ -105,6 +110,7 @@ function HandleMessage(eventType, eventData) {
 
     case "GAMEWINNER":
       gameStarted = false;
+      document.getElementById("timer").value = 0;
       while (roundsContainer.firstChild) {
         roundsContainer.removeChild(roundsContainer.firstChild);
       }
@@ -112,7 +118,7 @@ function HandleMessage(eventType, eventData) {
       break;
 
     case "READYCOUNT":
-      document.getElementById("readyCounter").innerText = eventData;
+      // document.getElementById("readyCounter").innerText = eventData;
       break;
   }
 }

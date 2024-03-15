@@ -10,14 +10,17 @@
     </script>
     <script src="/wsclient.js" defer></script>
   </head>
+
   <body>
     <header>
       <a href="/home">
         <img id="logo" src="/favicon.ico" alt="home">
       </a>
-      <h1><%= id %></h1>
+      <title><%= id %></title>
     </header>
-    <div id="readyCounter"></div>
+
+    <progress value="0" max="10" id="timer"></progress>
+
     <table>
       <thead>
         <tr>
@@ -27,7 +30,9 @@
       </thead>
       <tbody id="playerlist"></tbody>
     </table>
+
     <div id="roundsContainer"></div>
+
     <div>
       <input type="range" min="0" max="<%= startingStack %>" value="0" class="bidInput" id="slider" onchange="MatchInput(this, document.getElementById('inputBox'))">
       <input type="number" min="0" max="<%= startingStack %>" value="0" class="bidInput" id="inputBox" onchange="MatchInput(this, document.getElementById('slider'))">
