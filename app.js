@@ -46,10 +46,10 @@ app.use((req, res) => {
   res.redirect("/home");
 });
 
-server.on("upgrade", (req, res, socket, head) => {
+server.on("upgrade", (req, socket, head) => {
   const id = req.url.slice(1);
   const game = games.find((game) => game.id === id);
-  game.wss.handleUpgrade(req, res, socket, head, (ws) => {
+  game.wss.handleUpgrade(req, socket, head, (ws) => {
     game.wss.emit("connection", ws, socket);
   });
 })
