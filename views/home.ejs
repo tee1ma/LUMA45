@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>home</title>
     <link rel="stylesheet" href="/style.css">
-</head>
-<body>
+  </head>
+  <body>
     <table>
-        <thead>
-            <tr>
-                <th>name</th>
-                <th>players</th>
-                <th></th>
-            </tr>
-            <tr>
-                <form action="/create" method="post">
-                    <td>
-                        <input type="text" name="id">
-                    </td>
-                    <td></td>
-                    <td>
-                        <input type="submit" value="create">
-                    </td>
-                </form>
-            </tr>
-        </thead>
-        <tbody>
-            <% games.forEach((game) => { %>
-                <tr>
-                    <td><%= game.id %></td>
-                    <td><%= game.players.length %>/<%= game.maxPlayers %></td>
-                    <td>
-                        <a href="/game/<%= game.id %>">join</a>
-                    </td>
-                </tr>
-            <% }); %>
-        </tbody>
+      <thead>
+        <tr>
+          <th>name</th>
+          <th>players</th>
+          <th></th>
+        </tr>
+        <tr>
+          <form action="/create" method="post">
+            <td>
+              <input type="text" name="id">
+            </td>
+            <td></td>
+            <td>
+              <input type="submit" value="create">
+            </td>
+          </form>
+        </tr>
+      </thead>
+      <tbody>
+        <% games.forEach((game) => { %>
+        <tr>
+          <td><%= game.id %></td>
+          <td><%= game.players.length %>/<%= game.maxPlayers %></td>
+          <td>
+            <a href="/game/<%= game.id %>">join</a>
+          </td>
+        </tr>
+        <% }); %>
+      </tbody>
     </table>
-</body>
+  </body>
 </html>
