@@ -9,7 +9,7 @@ function ConnectToServer(playername) {
     const port = window.location.port;
     ws = new WebSocket(`ws://${host}:${port}/${id}`);
 
-    ws.addEventListener("open", (event) => {
+    ws.addEventListener("open", () => {
         console.log("sfsdf");
         ws.send(JSON.stringify(["NICKNAME", playername]));
     });
@@ -18,6 +18,9 @@ function ConnectToServer(playername) {
         const message = JSON.parse(event.data);
         HandleMessage(message[0], message[1]);
     });
+    ws.addEventListener("close", () => {
+        window.location.replace(`http://${host}:${port}/home`);
+    })
 }
 
 function HandleMessage(eventType, eventData) {
@@ -92,15 +95,8 @@ function HandleMessage(eventType, eventData) {
         
         case "STARTBIDDING":
             SetInputs("enabled");
+            document.getElementById("readyCounter").innerText = "";
             roundsContainer.children[eventData].style.backgroundColor = "gray";
-            
-            const progressBar = document.getElementById("progressBar");
-            let counter = timer;
-            const timerinterval = setInterval(() => {
-                if (counter === 0) { clearInterval(timerinterval) }
-                progressBar.innerText = counter;
-                counter--;
-            }, 1000)
             break;
 
         case "ROUNDWINNER":
@@ -114,7 +110,10 @@ function HandleMessage(eventType, eventData) {
             }
             alert("Game has ended. Winner is: " + eventData);
             break;
-
+            
+        case "READYCOUNT":
+            document.getElementById("readyCounter").innerText = eventData;
+            break;
     }
 }
 
