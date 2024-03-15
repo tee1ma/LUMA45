@@ -11,13 +11,13 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 
-app.use((req, next) => {
+app.use((req, res, next) => {
   console.log(`New ${req.method} request to ${req.path} by ${req.ip}`);
   console.log(games);
   next();
 });
 
-app.get("/home", (res) => {
+app.get("/home", (req, res) => {
   res.render("home", { games });
 });
 
@@ -42,11 +42,11 @@ app.get("/game/:id", (req, res) => {
   }
 });
 
-app.use((res) => {
+app.use((req, res) => {
   res.redirect("/home");
 });
 
-server.on("upgrade", (req, socket, head) => {
+server.on("upgrade", (req, res, socket, head) => {
   const id = req.url.slice(1);
   const game = games.find((game) => game.id === id);
   game.wss.handleUpgrade(req, socket, head, (ws) => {
