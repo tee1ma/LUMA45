@@ -7,7 +7,6 @@ class GAME {
     this.startingStack = 1000;
     this.hasStarted = false;
     this.timer = 30;
-    this.loopsSkipped = 0;
     this.players = [];
     this.wss = new WebSocket.WebSocketServer({ noServer: true });
     this.HandleWSS(this.wss, games);
@@ -45,10 +44,8 @@ class GAME {
 
   StartGame() {
     this.hasStarted = true;
-    this.loopsSkipped = 0;
     this.players.forEach((player) => {
       player.busted = false;
-      player.ready = false;
       player.pointsWon = [this.startingStack];
       player.startingPoints = 0;
       player.pointsBid = 0;
@@ -97,15 +94,11 @@ class GAME {
 
     if (this.players.filter(player => !player.busted).length > 1 && prizes.length > 0) {
       //A
-      this.players.forEach((player) => {
-        player.pointsBid = 0;
-        player.ready = false;
-      });
+      this.players.forEach((player) => { player.pointsBid = 0; });
       this.SendToClients(["STARTBIDDING", bettingRound]);
 
       setTimeout(() => {
-        if (this.loopsSkipped > 0) { this.loopsSkipped--; }
-        else { this.MainLoop(bettingRound, prizes, totalPoints); }
+        this.MainLoop(bettingRound, prizes, totalPoints); 
       }, this.timer * 1000);
     } else {
       this.hasStarted = false;
@@ -203,7 +196,6 @@ class PLAYER {
     this.pointsWon = [];
     this.admin = false;
     this.busted = false;
-    this.ready = false;
   }
   PublicInfo() {
     const playerinfo = {
@@ -230,7 +222,6 @@ class PLAYER {
     } else {
       this.pointsBid = 0;
     }
-    this.ready = true;
   }
 }
 
