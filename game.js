@@ -10,6 +10,11 @@ class GAME {
     this.players = [];
     this.wss = new WebSocket.WebSocketServer({ noServer: true });
     this.HandleWSS(this.wss, games);
+
+    this.loop;
+    this.looparg1;
+    this.looparg2;
+    this.looparg3;
   }
   IsFull() { return this.players.length >= this.maxPlayers; }
 
@@ -42,6 +47,11 @@ class GAME {
     return winnernames;
   }
 
+  ResetMainLoop() {
+    clearTimeout(this.loop);
+    this.MainLoop(this.looparg1, this.looparg2, this.looparg3);
+  }
+
   StartGame() {
     this.hasStarted = true;
     this.players.forEach((player) => {
@@ -49,6 +59,7 @@ class GAME {
       player.pointsWon = [this.startingStack];
       player.startingPoints = 0;
       player.pointsBid = 0;
+      player.ready = false;
     });
     this.SendToClients(["STARTGAME", this.timer]);
 
@@ -62,7 +73,11 @@ class GAME {
       this.players.forEach((player) => { player.pointsBid = 0; });
       this.SendToClients(["STARTBIDDING", 0]);
 
-      setTimeout(() => {
+      this.looparg1 = 0;
+      this.looparg2 = prizes;
+      this.looparg3 = totalPoints;
+
+      this.loop = setTimeout(() => {
         this.MainLoop(0, prizes, totalPoints);
       }, this.timer * 1000)
     }, 3000);
@@ -94,10 +109,14 @@ class GAME {
 
     if (this.players.filter(player => !player.busted).length > 1 && prizes.length > 0) {
       //A
-      this.players.forEach((player) => { player.pointsBid = 0; });
+      this.players.forEach((player) => { player.pointsBid = 0; player.ready = false; });
       this.SendToClients(["STARTBIDDING", bettingRound]);
 
-      setTimeout(() => {
+      this.looparg1 = bettingRound;
+      this.looparg2 = prizes;
+      this.looparg3 = totalPoints;
+
+      this.loop = setTimeout(() => {
         this.MainLoop(bettingRound, prizes, totalPoints); 
       }, this.timer * 1000);
     } else {
@@ -180,6 +199,13 @@ class GAME {
       case "BID":
         const bidder = this.players.find((player) => player.ws === ws);
         bidder.Bid(data);
+        if (this.players.every((player) => { return (player.busted || player.ready) && this.hasStarted; })) {
+          this.ResetMainLoop();
+        } else {
+          const totalPlayers = this.players.filter(player => !player.busted).length;
+          const playersReady = this.players.filter(player => player.ready).length;
+          this.SendToClients(["READYCOUNT", playersReady + "/" + totalPlayers]);
+        }
         break;
     }
   }
@@ -196,6 +222,7 @@ class PLAYER {
     this.pointsWon = [];
     this.admin = false;
     this.busted = false;
+    this.ready = false;
   }
   PublicInfo() {
     const playerinfo = {
@@ -222,6 +249,7 @@ class PLAYER {
     } else {
       this.pointsBid = 0;
     }
+    this.ready = true;
   }
 }
 
