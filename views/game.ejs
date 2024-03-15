@@ -12,9 +12,6 @@
   </head>
 
   <body>
-    <template>
-
-    </template>
 
     <header>
       <a href="/home">
@@ -43,5 +40,7 @@
       <input type="number" min="0" max="<%= startingStack %>" value="0" class="bidInput" id="inputBox" onchange="MatchInput(this, document.getElementById('slider'))">
       <button onclick="SendWs()" id="bidButton">bid</button>
     </div>
+
+    <div id="notification" class="hidden">info</div>
   </body>
 </html>

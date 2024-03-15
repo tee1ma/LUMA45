@@ -1,3 +1,4 @@
+/* General */
 img {
   image-rendering: pixelated;
 }
@@ -16,5 +17,20 @@ body {
 @font-face {
   font-family: 'Press Start 2P';
   src: url('/fonttibeibi.ttf');
+}
 
+/* Game Layout */
+div#notification {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 80%;
+  text-align: center;
+}
+.hidden {
+  display: none;
+}
+.visible {
+  display: block;
 }

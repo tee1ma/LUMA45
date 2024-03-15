@@ -3,6 +3,7 @@ let playername;
 let gameStarted = false;
 let playerStartingPoints;
 let timer;
+const notifyTime = 3000;
 
 function ConnectToServer(playername) {
   const host = window.location.hostname;
@@ -27,7 +28,7 @@ function HandleMessage(eventType, eventData) {
   const roundsContainer = document.getElementById("roundsContainer");
   switch (eventType) {
 
-    case "PLAYERLIST":
+    case "PLAYERLIST": //Update playerlist
       const playerlist = document.getElementById("playerlist");
 
       while (playerlist.firstChild) {
@@ -66,13 +67,13 @@ function HandleMessage(eventType, eventData) {
       });
       break;
 
-    case "YOURNAME":
+    case "YOURNAME": //For player to be identify himself
       playername = eventData;
       break;
 
     case "STARTGAME":
       gameStarted = true;
-      alert("Game has started");
+      Notify("Game has started");
       document.getElementById("timer").max = eventData * 10;
       break;
 
@@ -104,7 +105,7 @@ function HandleMessage(eventType, eventData) {
       break;
 
     case "ROUNDWINNER":
-      alert(`${eventData[1]} won by ${eventData[0]} with a bid of ${eventData[2]}`);
+      Notify(`${eventData[1]} won by ${eventData[0]} with a bid of ${eventData[2]}`);
       break;
 
     case "GAMEWINNER":
@@ -175,6 +176,17 @@ function SetInputs(state) {
       bidButton.innerText = "bid";
       break;
   }
+}
+
+function Notify(message) {
+  const notification = document.getElementById("notification");
+  notification.classList.remove("hidden");
+  notification.classList.add("visible");
+  notification.innerText = message;
+  setTimeout(() => {
+    notification.classList.remove("visible");
+    notification.classList.add("hidden");
+  }, notifyTime);
 }
 
 playername = window.prompt("Choose a nickname:");
