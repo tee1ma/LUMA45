@@ -49,7 +49,7 @@ app.use((req, res) => {
 server.on("upgrade", (req, res, socket, head) => {
   const id = req.url.slice(1);
   const game = games.find((game) => game.id === id);
-  game.wss.handleUpgrade(req, socket, head, (ws) => {
+  game.wss.handleUpgrade(req, res, socket, head, (ws) => {
     game.wss.emit("connection", ws, socket);
   });
 })
