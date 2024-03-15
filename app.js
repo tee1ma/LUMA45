@@ -11,19 +11,19 @@ app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 
-app.use((req, res, next) => {
+app.use((req, next) => {
   console.log(`New ${req.method} request to ${req.path} by ${req.ip}`);
   console.log(games);
   next();
 });
 
-app.get("/home", (req, res) => {
+app.get("/home", (res) => {
   res.render("home", { games });
 });
 
 app.post("/create", (req, res) => {
   const id = req.body.id.replaceAll(/\s/g, "").replaceAll(" ", "");
-  if (games.some((game) => game.id === id || games.length > 20)) {
+  if (games.some((game) => game.id === id || games.length > 20 || id.length < 2)) {
     res.redirect("/home");
   } else {
     const game = new GAME(id, games);
@@ -42,7 +42,7 @@ app.get("/game/:id", (req, res) => {
   }
 });
 
-app.use((req, res) => {
+app.use((res) => {
   res.redirect("/home");
 });
 
