@@ -73,7 +73,7 @@ function HandleMessage(eventType, eventData) {
     case "STARTGAME":
       gameStarted = true;
       alert("Game has started");
-      document.getElementById("timer").max = eventData * 1000;
+      document.getElementById("timer").max = eventData * 10;
       break;
 
     case "PRIZES":
@@ -90,18 +90,17 @@ function HandleMessage(eventType, eventData) {
       const slider = document.getElementById("slider");
       slider.max = playerStartingPoints;
       slider.value = "0";
-
       break;
 
     case "STARTBIDDING":
       SetInputs("enabled");
-      // document.getElementById("readyCounter").innerText = "";
+      document.getElementById("readyCounter").innerText = "";
       roundsContainer.children[eventData].style.backgroundColor = "gray";
       document.getElementById("timer").value = 0;
       if (timer) { clearInterval(timer); }
       timer = setInterval(() => {
         document.getElementById("timer").value++;
-      }, 1);
+      }, 100);
       break;
 
     case "ROUNDWINNER":
@@ -118,7 +117,7 @@ function HandleMessage(eventType, eventData) {
       break;
 
     case "READYCOUNT":
-      // document.getElementById("readyCounter").innerText = eventData;
+      document.getElementById("readyCounter").innerText = eventData;
       break;
   }
 }
