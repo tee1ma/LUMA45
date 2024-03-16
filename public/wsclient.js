@@ -28,43 +28,8 @@ function HandleMessage(eventType, eventData) {
   const roundsContainer = document.getElementById("roundsContainer");
   switch (eventType) {
 
-    case "PLAYERLIST": //Update playerlist
-      const playerlist = document.getElementById("playerlist");
-
-      while (playerlist.firstChild) {
-        playerlist.removeChild(playerlist.firstChild);
-      }
-
-      eventData.forEach((player) => {
-        const row = document.createElement("tr");
-        const nickname = document.createElement("td");
-        nickname.innerText = player.nickname;
-        const startingPoints = document.createElement("td");
-        startingPoints.innerText = player.startingPoints;
-        const admin = document.createElement("td");
-        const pointsWon = document.createElement("td");
-        pointsWon.innerText = JSON.stringify(player.pointsWon);
-        if (player.admin) {
-          admin.innerText = "admin";
-        }
-        if (player.nickname === playername) {
-          row.style.backgroundColor = "gray";
-          playerStartingPoints = player.startingPoints;
-          if (!gameStarted) {
-            if (player.admin) {
-              SetInputs("admin");
-            } else {
-              SetInputs("hidden");
-            }
-          }
-        }
-        else if (player.busted) { row.style.backgroundColor = "red"; }
-        playerlist.appendChild(row);
-        row.appendChild(nickname);
-        row.appendChild(startingPoints);
-        row.appendChild(admin);
-        row.appendChild(pointsWon);
-      });
+    case "PLAYERLIST":
+      UpdatePlayerList(eventData)
       break;
 
     case "YOURNAME": //For player to be identify himself
@@ -139,6 +104,52 @@ function SendWs() {
   } else {
     ws.send(JSON.stringify(["STARTGAME"]));
   }
+}
+
+class ROUND {
+  constructor() {
+    
+  }
+}
+
+function UpdatePlayerList(players) {
+  const playerlist = document.getElementById("playerlist");
+
+  while (playerlist.firstChild) {
+    playerlist.removeChild(playerlist.firstChild);
+  }
+
+  players.forEach((player) => {
+    const row = document.createElement("tr");
+    const nickname = document.createElement("td");
+    nickname.innerText = player.nickname;
+    const startingPoints = document.createElement("td");
+    startingPoints.innerText = player.startingPoints;
+    const admin = document.createElement("td");
+    const pointsWon = document.createElement("td");
+    pointsWon.innerText = JSON.stringify(player.pointsWon);
+    if (player.admin) {
+      admin.innerText = "admin";
+    }
+    if (player.nickname === playername) {
+      row.style.backgroundColor = "gray";
+      playerStartingPoints = player.startingPoints;
+      if (!gameStarted) {
+        if (player.admin) {
+          SetInputs("admin");
+        } else {
+          SetInputs("hidden");
+        }
+      }
+    }
+    else if (player.busted) { row.style.backgroundColor = "red"; }
+    playerlist.appendChild(row);
+    row.appendChild(nickname);
+    row.appendChild(startingPoints);
+    row.appendChild(admin);
+    row.appendChild(pointsWon);
+  });
+
 }
 
 function MatchInput(changedElement, correspondingElement) {
