@@ -127,6 +127,7 @@ class GAME {
         return a.startingPoints > b.startingPoints ? a : b;
       });
       this.SendToClients(["GAMEWINNER", winner.nickname]);
+      this.UpdatePlayerList();
     }
   }
 
@@ -136,7 +137,6 @@ class GAME {
         console.log("Connection denied. Server is full!");
         socket.destroy();
       } else {
-        console.log("Player connected");
         const newPlayer = new PLAYER(ws);
         this.players.push(newPlayer);
         if (this.players.length === 1) { newPlayer.admin = true; }
@@ -149,6 +149,7 @@ class GAME {
             wss.close(() => {
               const index = games.findIndex(game => game.id === this.id);
               games.splice(index, 1);
+              console.log(`(${this.id}) was autodeleted`)
             });
           } else if (newPlayer.admin) {
             this.players[0].admin = true;

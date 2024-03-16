@@ -62,8 +62,8 @@ function HandleMessage(eventType, eventData) {
       SetInputs("enabled");
       document.getElementById("readyCounter").innerText = "";
       roundsContainer.children[eventData].style.backgroundColor = "gray";
-      document.getElementById("timer").value = 0;
       if (timer) { clearInterval(timer); }
+      document.getElementById("timer").value = 0;
       timer = setInterval(() => {
         document.getElementById("timer").value++;
       }, 100);
@@ -75,6 +75,7 @@ function HandleMessage(eventType, eventData) {
 
     case "GAMEWINNER":
       gameStarted = false;
+      if (timer) { clearInterval(timer); }
       document.getElementById("timer").value = 0;
       while (roundsContainer.firstChild) {
         roundsContainer.removeChild(roundsContainer.firstChild);
