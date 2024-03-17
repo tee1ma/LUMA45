@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/style.css">
     <script>
     var id = "<%= id %>"
+    var mdown;
     </script>
     <script src="/wsclient.js" defer></script>
   </head>
@@ -17,6 +18,7 @@
         <img id="logo" src="/favicon.ico" alt="home">
       </a>
       <h1><%= id %></h1>
+      <button type="button" onclick="StartGame()">tempStart</button>
     </header>
 
     <progress value="0" max="10" id="timer"></progress>
@@ -34,10 +36,12 @@
 
     <div id="roundsContainer"></div>
 
+    <input type="number" id="bidLabel" value="0" min="0" max="<%= startingStack %>" onchange="RefreshSlider(this)">
     <div>
-      <input type="range" min="0" max="<%= startingStack %>" value="0" class="bidInput" id="slider" onchange="MatchInput(this, document.getElementById('inputBox'))">
-      <input type="number" min="0" max="<%= startingStack %>" value="0" class="bidInput" id="inputBox" onchange="MatchInput(this, document.getElementById('slider'))">
-      <button onclick="SendWs()" id="bidButton">bid</button>
+      <label for="slider" id="minLabel">0</label>
+      <input type="range" id="slider" value="0" min="0" max="<%= startingStack %>" onchange="RefreshBidLabel()" onmousedown="mdown = setInterval(RefreshBidLabel, 50)" on>
+      <label for="slider" id="maxLabel"><%= startingStack %></label>
+      <button type="button" id="bidButton" onclick="Bid(this)">Bid</button>
     </div>
 
     <div id="notification" class="hidden">info</div>

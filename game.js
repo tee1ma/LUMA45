@@ -181,25 +181,25 @@ class GAME {
   }
 
   OnWsMessage(type, data, ws) {
+    const sender = this.players.find(player => player.ws === ws);
     switch (type) {
       case "NICKNAME":
         if (data == null || data.replaceAll(/\s/g, "").replaceAll(" ", "").length < 2 || this.players.find((player) => player.nickname === data)) {
           data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
           ws.send(JSON.stringify(["YOURNAME", data]));
         }
-        this.players.find((player) => player.ws === ws).nickname = data;
+        sender.nickname = data;
         this.UpdatePlayerList();
         break;
 
       case "STARTGAME":
-        if (this.players.length > 1) {
+        if (this.players.length > 1 && sender.admin) {
           this.StartGame();
         }
         break;
 
       case "BID":
-        const bidder = this.players.find((player) => player.ws === ws);
-        bidder.Bid(data);
+        sender.Bid(data);
         if (this.players.every((player) => { return (player.busted || player.ready) && this.hasStarted; })) {
           this.ResetMainLoop();
         } else {

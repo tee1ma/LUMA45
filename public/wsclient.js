@@ -1,7 +1,7 @@
 let ws;
 let playername;
-let gameStarted = false;
 let playerStartingPoints;
+let gameStarted = false;
 let timer;
 const notifyTime = 3000;
 
@@ -11,7 +11,7 @@ function ConnectToServer(playername) {
   ws = new WebSocket(`ws://${host}:${port}/${id}`);
 
   ws.addEventListener("open", () => {
-    console.log("sfsdf");
+    console.log("Successfully connected to the server");
     ws.send(JSON.stringify(["NICKNAME", playername]));
   });
   ws.addEventListener("message", (event) => {
@@ -32,7 +32,7 @@ function HandleMessage(eventType, eventData) {
       UpdatePlayerList(eventData)
       break;
 
-    case "YOURNAME": //For player to be identify himself
+    case "YOURNAME":
       playername = eventData;
       break;
 
@@ -52,16 +52,15 @@ function HandleMessage(eventType, eventData) {
         prizeElement.innerText = prize;
         roundsContainer.appendChild(prizeElement);
       });
-
-      const slider = document.getElementById("slider");
-      slider.max = playerStartingPoints;
-      slider.value = "0";
       break;
 
     case "STARTBIDDING":
-      SetInputs("enabled");
       document.getElementById("readyCounter").innerText = "";
+      document.getElementById("slider").max = playerStartingPoints;
+      dicument.getElementById("bidLabel").max = playerStartingPoints;
+      document.getElementById("maxLabel").innerText = playerStartingPoints;
       roundsContainer.children[eventData].style.backgroundColor = "gray";
+      document.getElementById("bidButton").style.visibility = "visible";
       if (timer) { clearInterval(timer); }
       document.getElementById("timer").value = 0;
       timer = setInterval(() => {
@@ -89,30 +88,6 @@ function HandleMessage(eventType, eventData) {
   }
 }
 
-function SendWs() {
-  if (gameStarted) {
-    const bidAmount = parseInt(document.getElementById("inputBox").value);
-    ws.send(JSON.stringify(["BID", bidAmount]));
-
-    const slider = document.getElementById("slider");
-    slider.max = (parseInt(slider.max) - bidAmount);
-    slider.value = "0";
-    const inputBox = document.getElementById("inputBox");
-    inputBox.max = (parseInt(inputBox.max) - bidAmount);
-    inputBox.value = "0";
-
-    SetInputs("disabled");
-  } else {
-    ws.send(JSON.stringify(["STARTGAME"]));
-  }
-}
-
-class ROUND {
-  constructor() {
-    
-  }
-}
-
 function UpdatePlayerList(players) {
   const playerlist = document.getElementById("playerlist");
 
@@ -135,13 +110,6 @@ function UpdatePlayerList(players) {
     if (player.nickname === playername) {
       row.style.backgroundColor = "gray";
       playerStartingPoints = player.startingPoints;
-      if (!gameStarted) {
-        if (player.admin) {
-          SetInputs("admin");
-        } else {
-          SetInputs("hidden");
-        }
-      }
     }
     else if (player.busted) { row.style.backgroundColor = "red"; }
     playerlist.appendChild(row);
@@ -153,51 +121,42 @@ function UpdatePlayerList(players) {
 
 }
 
-function MatchInput(changedElement, correspondingElement) {
-  correspondingElement.value = changedElement.value;
-  correspondingElement.max = changedElement.max;
+function RefreshSlider(bidLabel) {
+  const slider = document.getElementById("slider");
+  slider.value = bidLabel.value;
+  slider.max = bidLabel.max;
 }
 
-function SetInputs(state) {
-
+function RefreshBidLabel() {
   const slider = document.getElementById("slider");
-  const bidButton = document.getElementById("bidButton");
-  const inputBox = document.getElementById("inputBox");
+  const label = document.getElementById("bidLabel");
+  label.value = slider.value;
+  label.max = slider.max;
+}
 
-  switch (state) {
-    case "hidden":
-      slider.style.visibility = "hidden";
-      bidButton.style.visibility = "hidden";
-      inputBox.style.visibility = "hidden";
-      break;
-    case "disabled":
-      slider.style.visibility = "visible";
-      bidButton.style.visibility = "hidden";
-      inputBox.style.visibility = "visible";
-      break;
-    case "admin":
-      inputBox.style.visibility = "hidden";
-      slider.style.visibility = "hidden";
-      bidButton.style.visibility = "visible";
-      bidButton.innerText = "start game";
-      break;
-    case "enabled":
-      inputBox.style.visibility = "visible";
-      slider.style.visibility = "visible";
-      bidButton.style.visibility = "visible";
-      bidButton.innerText = "bid";
-      break;
-  }
+document.addEventListener("mouseup", () => { if (mdown) { clearInterval(mdown) }})
+
+function Bid(btn) {
+  const slider = document.getElementById("slider");
+  const amount = parseInt(slider.value); 
+  ws.send(JSON.stringify(["BID", amount]));
+  slider.value = 0;
+  RefreshBidLabel();
+  slider.max = parseInt(slider.max) - amount;
+  document.getElementById("maxLabel").innerText = slider.max;
+  btn.style.visibility = "hidden";
+}
+
+function StartGame() {
+  ws.send(JSON.stringify(["STARTGAME"]));
 }
 
 function Notify(message) {
   const notification = document.getElementById("notification");
-  notification.classList.remove("hidden");
-  notification.classList.add("visible");
+  notification.style.visibility = "visible";
   notification.innerText = message;
   setTimeout(() => {
-    notification.classList.remove("visible");
-    notification.classList.add("hidden");
+    notification.style.visibility = "hidden";
   }, notifyTime);
 }
 

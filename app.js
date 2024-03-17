@@ -22,10 +22,11 @@ app.get("/home", (req, res) => {
 
 app.post("/create", (req, res) => {
   const id = req.body.id.replaceAll(/\s/g, "").replaceAll(" ", "");
-  if (games.some((game) => game.id === id || games.length > 20 || id.length < 2)) {
+  if (games.some(game => game.id === id) || games.length > 20 || id.length < 2) {
     res.redirect("/home");
   } else {
     const game = new GAME(id, games);
+    console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);
   }

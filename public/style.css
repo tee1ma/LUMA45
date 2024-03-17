@@ -27,10 +27,9 @@ div#notification {
   margin: auto;
   width: 80%;
   text-align: center;
+  visibility: hidden;
 }
-.hidden {
-  display: none;
-}
-.visible {
-  display: block;
+
+#bidButton {
+  visibility: hidden;
 }
