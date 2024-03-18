@@ -4,8 +4,13 @@ const WebSocket = require("ws");
 const GAME = require("./game");
 
 let games = [];
-
 const homews = new WebSocket.WebSocketServer({ noServer: true });
+
+function UpdateGameList() {
+  homews.clients.forEach(ws => {
+    ws.send("HELLO MOTHERFUCKER");
+  });
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -32,7 +37,6 @@ app.post("/create", (req, res) => {
     console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);
-    console.log(homews.clients);
   }
 });
 
