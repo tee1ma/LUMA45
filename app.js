@@ -1,11 +1,11 @@
 const express = require("express");
 const http = require("http");
-const WebSocket = require("ws").server;
+const WebSocket = require("ws");
 const GAME = require("./game");
 
 let games = [];
 
-const homews = new WebSocket({ noServer: true });
+const homews = new WebSocket.WebSocketServer({ noServer: true });
 
 const app = express();
 const server = http.createServer(app);
