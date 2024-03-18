@@ -13,7 +13,7 @@ function UpdateGameList() {
     gameinfo.push([game.id, game.players.length + "/" + game.maxPlayers, game.hasStarted]);
   });
   homews.clients.forEach(ws => {
-    ws.send(gameinfo);
+    ws.send(JSON.stringify(gameinfo));
   });
 }
 
@@ -67,6 +67,7 @@ server.on("upgrade", (req, socket, head) => {
     game.wss.handleUpgrade(req, socket, head, (ws) => {
       game.wss.emit("connection", ws, socket);
     });
+    UpdateGameList();
   } else {
     homews.handleUpgrade(req, socket, head, (ws) => {});
   }
@@ -74,5 +75,6 @@ server.on("upgrade", (req, socket, head) => {
 
 const port = 80;
 server.listen(port, () => {
-  console.log("Server running on port", port)
+  console.log("Server running on port", port);
+  setInterval(UpdateGameList, 10000);
 });
