@@ -48,8 +48,9 @@ function HandleMessage(eventType, eventData) {
       }
 
       eventData.forEach((prize) => {
-        const prizeElement = document.createElement("div");
+        const prizeElement = document.createElement("span");
         prizeElement.innerText = prize;
+        prizeElement.className = "roundInfo";
         roundsContainer.appendChild(prizeElement);
       });
       break;
@@ -57,7 +58,7 @@ function HandleMessage(eventType, eventData) {
     case "STARTBIDDING":
       document.getElementById("readyCounter").innerText = "";
       document.getElementById("slider").max = playerStartingPoints;
-      dicument.getElementById("bidLabel").max = playerStartingPoints;
+      document.getElementById("bidLabel").max = playerStartingPoints;
       document.getElementById("maxLabel").innerText = playerStartingPoints;
       roundsContainer.children[eventData].style.backgroundColor = "gray";
       document.getElementById("bidButton").style.visibility = "visible";

@@ -75,5 +75,5 @@ server.on("upgrade", (req, socket, head) => {
 const port = 80;
 server.listen(port, () => {
   console.log("Server running on port", port);
-  setInterval(UpdateGameList(), 10000);
+  setInterval(UpdateGameList, 10000);
 });

@@ -19,9 +19,9 @@ body {
   src: url('/fonttibeibi.ttf');
 }
 
-/* Game Layout */
+/* popup panel */
 div#notification {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   margin: auto;
@@ -30,6 +30,21 @@ div#notification {
   visibility: hidden;
 }
 
-#bidButton {
+/* player controls */
+button#bidButton {
   visibility: hidden;
+}
+
+/* Roundinfo */
+div#roundsContainer {
+  position: relative;
+  left: 0;
+  right: 0;
+  padding: 10px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.roundInfo {
+  margin-left: 5px;
+  margin-right: 5px;
 }

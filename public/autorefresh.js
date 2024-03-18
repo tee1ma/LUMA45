@@ -23,7 +23,7 @@ function UpdateGameList(games) {
 
   //Create updated list
   games.forEach(game => {
-    if (game[2]) {
+    if (!game[2]) {
       const tr = document.createElement("tr");
       tbody.appendChild(tr);
       const name = document.createElement("td");
