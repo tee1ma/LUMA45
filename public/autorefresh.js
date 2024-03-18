@@ -8,6 +8,9 @@ function ConnectToServer() {
     const games = JSON.parse(event.data);
     UpdateGameList(games);
   });
+  ws.addEventListener("open", () => {
+    console.log("Successfully connected to the server");
+  });
 }
 
 function UpdateGameList(games) {
