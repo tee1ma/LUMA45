@@ -8,7 +8,6 @@ const homews = new WebSocket.WebSocketServer({ noServer: true });
 
 function UpdateGameList() {
   homews.clients.forEach(ws => {
-    console.log("Sent message to all clients");
     ws.send("HELLO MOTHERFUCKER");
   });
 }
@@ -64,9 +63,7 @@ server.on("upgrade", (req, socket, head) => {
       game.wss.emit("connection", ws, socket);
     });
   } else {
-    homews.handleUpgrade(req, socket, head, (ws) => {
-      homews.emit("connection", ws, socket);
-    });
+    homews.handleUpgrade(req, socket, head, (ws) => {});
   }
 })
 
