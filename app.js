@@ -2,6 +2,7 @@ const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
 const GAME = require("./game");
+//test
 
 let games = [];
 const homews = new WebSocket.WebSocketServer({ noServer: true });
