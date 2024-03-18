@@ -1,8 +1,11 @@
 const express = require("express");
 const http = require("http");
+const WebSocket = require("ws").server;
 const GAME = require("./game");
 
 let games = [];
+
+const homews = new WebSocket({ noServer: true });
 
 const app = express();
 const server = http.createServer(app);
@@ -29,6 +32,7 @@ app.post("/create", (req, res) => {
     console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);
+    console.log(homews.clients);
   }
 });
 
@@ -48,11 +52,16 @@ app.use((req, res) => {
 
 server.on("upgrade", (req, socket, head) => {
   const id = req.url.slice(1);
-  console.log(id.length);
   const game = games.find((game) => game.id === id);
-  game.wss.handleUpgrade(req, socket, head, (ws) => {
-    game.wss.emit("connection", ws, socket);
-  });
+  if (game) {
+    game.wss.handleUpgrade(req, socket, head, (ws) => {
+      game.wss.emit("connection", ws, socket);
+    });
+  } else {
+    homews.handleUpgrade(req, socket, head, (ws) => {
+      homews.emit("connection", ws, socket);
+    });
+  }
 })
 
 const port = 80;
