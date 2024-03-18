@@ -7,8 +7,12 @@ let games = [];
 const homews = new WebSocket.WebSocketServer({ noServer: true });
 
 function UpdateGameList() {
+  let gameinfo = [];
+  games.forEach(game => {
+    gameinfo.push([game.id, game.players.length + "/" + game.maxPlayers, game.hasStarted]);
+  });
   homews.clients.forEach(ws => {
-    ws.send("HELLO MOTHERFUCKER");
+    ws.send(gameinfo);
   });
 }
 
