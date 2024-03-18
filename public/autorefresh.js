@@ -14,7 +14,28 @@ function ConnectToServer() {
 }
 
 function UpdateGameList(games) {
-  
+
+  //Remove old game list
+  const tbody = document.getElementsByTagName("tbody")[0];
+  while (tbody.firstChild) {
+    tbody.removeChild(tbody.firstChild);
+  }
+
+  //Create updated list
+  games.forEach(game => {
+    const tr = document.createElement("tr");
+    tbody.appendChild(tr);
+    const name = document.createElement("td");
+    name.innerText = game[0];
+    tr.appendChild(name);
+    const players = document.createElement("td");
+    players.innerText = game[1];
+    tr.appendChild(players);
+    const link = document.createElement("a");
+    link.innerText = "Join";
+    link.href = "/game/" + game[0];
+    tr.appendChild(document.createElement("td").appendChild(link));
+  });  
 }
 
 ConnectToServer();
