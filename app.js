@@ -37,6 +37,7 @@ app.post("/create", (req, res) => {
     console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);
+    UpdateGameList();
   }
 });
 
