@@ -7,7 +7,7 @@ let games = [];
 const homews = new WebSocket.WebSocketServer({ noServer: true });
 
 function UpdateGameList() {
-  homews.clients.forEach(ws => {
+  homews.server.clients.forEach(ws => {
     console.log("Sent message to all clients");
     ws.send("HELLO MOTHERFUCKER");
   });
