@@ -101,6 +101,7 @@ class GAME {
       this.UpdatePlayerList();
       if (prizes.length > 2) {
         prizes = this.CreatePrizes(prizes.length - 2, totalPoints);
+        this.SendToClients(["PRIZES", prizes]);
       } else {
         prizes = [];
       }
@@ -108,7 +109,6 @@ class GAME {
 
     if (this.players.filter(player => !player.busted).length > 1 && prizes.length > 0) {
       //A
-      this.SendToClients(["PRIZES", prizes]);
       this.players.forEach((player) => { player.pointsBid = 0; player.ready = false; });
       this.SendToClients(["STARTBIDDING", bettingRound]);
 
