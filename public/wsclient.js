@@ -57,9 +57,6 @@ function HandleMessage(eventType, eventData) {
 
     case "STARTBIDDING":
       document.getElementById("readyCounter").innerText = "";
-      document.getElementById("slider").max = playerStartingPoints;
-      document.getElementById("bidLabel").max = playerStartingPoints;
-      document.getElementById("maxLabel").innerText = playerStartingPoints;
       roundsContainer.children[eventData].style.backgroundColor = "gray";
       document.getElementById("bidButton").style.visibility = "visible";
       if (timer) { clearInterval(timer); }
@@ -71,6 +68,9 @@ function HandleMessage(eventType, eventData) {
 
     case "ROUNDWINNER":
       Notify(`${eventData[1]} won by ${eventData[0]} with a bid of ${eventData[2]}`);
+      document.getElementById("slider").max = playerStartingPoints;
+      document.getElementById("bidLabel").max = playerStartingPoints;
+      document.getElementById("maxLabel").innerText = playerStartingPoints;
       break;
 
     case "GAMEWINNER":
