@@ -53,6 +53,9 @@ function HandleMessage(eventType, eventData) {
         prizeElement.className = "roundInfo";
         roundsContainer.appendChild(prizeElement);
       });
+      document.getElementById("slider").max = playerStartingPoints;
+      document.getElementById("bidLabel").max = playerStartingPoints;
+      document.getElementById("maxLabel").innerText = playerStartingPoints;
       break;
 
     case "STARTBIDDING":
@@ -68,9 +71,6 @@ function HandleMessage(eventType, eventData) {
 
     case "ROUNDWINNER":
       Notify(`${eventData[1]} won by ${eventData[0]} with a bid of ${eventData[2]}`);
-      document.getElementById("slider").max = playerStartingPoints;
-      document.getElementById("bidLabel").max = playerStartingPoints;
-      document.getElementById("maxLabel").innerText = playerStartingPoints;
       break;
 
     case "GAMEWINNER":
