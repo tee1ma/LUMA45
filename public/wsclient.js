@@ -47,10 +47,8 @@ function HandleMessage(eventType, eventData) {
         roundsContainer.removeChild(roundsContainer.firstChild);
       }
 
-      eventData.forEach((prize) => {
-        const prizeElement = document.createElement("span");
-        prizeElement.innerText = prize;
-        prizeElement.className = "roundInfo";
+      eventData.forEach((prize, index) => {
+        const prizeElement = CreatePrize(prize, index, eventData.length, "Largest bet wins!");
         roundsContainer.appendChild(prizeElement);
       });
       document.getElementById("slider").max = playerStartingPoints;
@@ -87,6 +85,27 @@ function HandleMessage(eventType, eventData) {
       document.getElementById("readyCounter").innerText = eventData;
       break;
   }
+}
+
+function CreatePrize(prize, index, total, roundDetails) {
+
+  const prizeBox = document.createElement("span");
+  prizeBox.className = "prizeBox";
+  prizeBox.id = index;
+
+  const roundNumber = document.createElement("h3");
+  roundNumber.innerText = index + "/" + total;
+  prizeBox.appendChild(roundNumber);
+
+  const prizeAmount = document.createElement("h2");
+  prizeAmount.innerText = prize;
+  prizeBox.appendChild(prizeAmount);
+
+  const roundInfo = document.createElement("h4");
+  roundInfo.innerText = roundDetails;
+  prizeBox.appendChild(roundInfo);
+
+  return prizeBox;
 }
 
 function UpdatePlayerList(players) {

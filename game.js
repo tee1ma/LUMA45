@@ -80,7 +80,7 @@ class GAME {
       this.loop = setTimeout(() => {
         this.MainLoop(0, prizes, totalPoints);
       }, this.timer * 1000)
-    }, 3000);
+    }, 1000);
 
   }
 
