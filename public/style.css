@@ -38,6 +38,7 @@ button#bidButton {
 /* Roundinfo */
 div#roundsContainer {
   position: relative;
+  overflow-x: scroll;
   left: 40%;
   right: 0;
   padding: 10px;
