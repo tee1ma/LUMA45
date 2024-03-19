@@ -142,10 +142,10 @@ function Bid(btn) {
   const amount = parseInt(slider.value); 
   ws.send(JSON.stringify(["BID", amount]));
   slider.value = 0;
-  RefreshBidLabel();
   slider.max = parseInt(slider.max) - amount;
   document.getElementById("maxLabel").innerText = slider.max;
   btn.style.visibility = "hidden";
+  RefreshBidLabel();
 }
 
 function StartGame() {
