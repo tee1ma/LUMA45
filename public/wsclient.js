@@ -95,7 +95,7 @@ function CreatePrize(prize, index, total, roundDetails) {
   prizeBox.id = index;
 
   const roundNumber = document.createElement("h3");
-  roundNumber.innerText = index + "/" + total;
+  roundNumber.innerText = index+1 + "/" + total;
   prizeBox.appendChild(roundNumber);
 
   const prizeAmount = document.createElement("h2");
