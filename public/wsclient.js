@@ -59,6 +59,7 @@ function HandleMessage(eventType, eventData) {
     case "STARTBIDDING":
       document.getElementById("readyCounter").innerText = "";
       roundsContainer.children[eventData].style.backgroundColor = "gray";
+      MovePrize(eventData);
       document.getElementById("bidButton").style.visibility = "visible";
       if (timer) { clearInterval(timer); }
       document.getElementById("timer").value = 0;
@@ -106,6 +107,12 @@ function CreatePrize(prize, index, total, roundDetails) {
   prizeBox.appendChild(roundInfo);
 
   return prizeBox;
+}
+
+function MovePrize(index) {
+  if (index >= 1) {
+    document.getElementById(index - 1).remove();
+  }
 }
 
 function UpdatePlayerList(players) {
