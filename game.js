@@ -6,7 +6,7 @@ class GAME {
     this.maxPlayers = 20;
     this.startingStack = 1000;
     this.hasStarted = false;
-    this.timer = 30;
+    this.timer = 20;
     this.players = [];
     this.wss = new WebSocket.WebSocketServer({ noServer: true });
     this.HandleWSS(this.wss, games);
