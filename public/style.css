@@ -38,12 +38,10 @@ button#bidButton {
 /* Roundinfo */
 div#roundsContainer {
   position: relative;
-  overflow-x: scroll;
+  overflow-x: hidden;
   left: 40%;
-  right: 0;
+  width: 60%;
   padding: 10px;
-  margin-left: auto;
-  margin-right: auto;
 }
 .prizeBox {
   display: inline-block;
