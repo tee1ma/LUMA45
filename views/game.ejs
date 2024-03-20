@@ -23,25 +23,21 @@
 
     <progress value="0" max="10" id="timer"></progress>
 
-    <table id="playerList">
+    <table>
       <caption id="readyCounter"></caption>
-      <thead>
-        <tr>
-          <th>Nickname</th>
-          <th>StartingPoints</th>
-        </tr>
-      </thead>
       <tbody id="playerlist"></tbody>
     </table>
 
     <div id="roundsContainer"></div>
 
-    <input type="number" id="bidLabel" value="0" min="0" max="<%= startingStack %>" onchange="RefreshSlider(this)">
-    <div>
-      <label for="slider" id="minLabel">0</label>
-      <input type="range" id="slider" value="0" min="0" max="<%= startingStack %>" onchange="RefreshBidLabel()" onmousedown="mdown = setInterval(RefreshBidLabel, 50)" on>
-      <label for="slider" id="maxLabel"><%= startingStack %></label>
-      <button type="button" id="bidButton" onclick="Bid(this)">Bid</button>
+    <div id="inputsContainer">
+      <input type="number" id="bidLabel" value="0" min="0" max="<%= startingStack %>" onchange="RefreshSlider(this)">
+      <div>
+        <label for="slider" id="minLabel">0</label>
+        <input type="range" id="slider" value="0" min="0" max="<%= startingStack %>" onchange="RefreshBidLabel()" onmousedown="mdown = setInterval(RefreshBidLabel, 50)" on>
+        <label for="slider" id="maxLabel"><%= startingStack %></label>
+        <button type="button" id="bidButton" onclick="Bid(this)">Bid</button>
+      </div>
     </div>
 
     <div id="notification" class="hidden">info</div>

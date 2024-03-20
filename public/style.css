@@ -13,10 +13,21 @@ body {
   background-image: url("/backpic.png");
   background-size: 192px;
   background-repeat: repeat;
+  margin: 0;
+  padding: 0;
 }
 @font-face {
   font-family: 'Press Start 2P';
   src: url('/fonttibeibi.ttf');
+}
+header {
+  width: 100%;
+  height: 70px;
+  background-color: blue;
+  padding: 3px;
+}
+h1 {
+  display: inline;
 }
 
 /* popup panel */
@@ -31,6 +42,15 @@ div#notification {
 }
 
 /* player controls */
+div#inputsContainer {
+  position: fixed;
+  left: 40%;
+  right: 0;
+  bottom: 0;
+  margin-left: auto;
+  margin-right: auto;
+  height: 20%;
+}
 button#bidButton {
   visibility: hidden;
 }
@@ -51,6 +71,21 @@ div#roundsContainer {
 }
 
 /* Playerlist */
-table#playerList {
+table {
   position: fixed;
+  top: 80px;
+  left: 0;
+  max-width: 40%;
+  bottom: 10%;
+  overflow-y: auto;
+  overflow-x: visible;
+  background-color: #ff5555;
+  border: 2px solid #ff3333;
+  border-radius: 15px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+caption#readyCounter {
+  height: 20px;
 }
