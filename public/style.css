@@ -5,6 +5,7 @@ img {
 img#logo {
   width: 64px;
   height: 64px;
+  float: left;
 }
 body {
   font-family: 'Press Start 2P', sans-serif;
@@ -25,9 +26,16 @@ header {
   height: 70px;
   background-color: blue;
   padding: 3px;
+  text-align: center;
 }
 h1 {
   display: inline;
+}
+
+/* Menu */
+table#serverList {
+  display: flex;
+  width: 100%;
 }
 
 /* popup panel */
@@ -71,7 +79,7 @@ div#roundsContainer {
 }
 
 /* Playerlist */
-table {
+table#playerListContainer {
   position: fixed;
   top: 80px;
   left: 0;
