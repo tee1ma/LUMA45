@@ -53,6 +53,7 @@ div#notification {
 progress {
   width: 100%;
   height: 10px;
+  margin: 0;
 }
 
 /* player controls */
