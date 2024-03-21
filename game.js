@@ -185,7 +185,7 @@ class GAME {
     switch (type) {
       case "NICKNAME":
         let name = data.replaceAll(/\s/g, "").replaceAll(" ", "").length;
-        if (name > 16 || name < 2 || this.players.find((player) => player.nickname === name)) {
+        if (name === null || name > 16 || name < 2 || this.players.find((player) => player.nickname === name)) {
           name = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
           ws.send(JSON.stringify(["YOURNAME", name]));
         }
