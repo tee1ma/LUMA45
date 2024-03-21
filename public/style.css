@@ -6,6 +6,7 @@ img#logo {
   width: 64px;
   height: 64px;
   float: left;
+  margin: 0;
 }
 body {
   font-family: 'Press Start 2P', sans-serif;
@@ -27,6 +28,7 @@ header {
   background-color: blue;
   padding: 3px;
   text-align: center;
+  margin: 0;
 }
 h1 {
   display: inline;
