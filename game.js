@@ -184,9 +184,10 @@ class GAME {
     const sender = this.players.find(player => player.ws === ws);
     switch (type) {
       case "NICKNAME":
-        if (data == null || data.replaceAll(/\s/g, "").replaceAll(" ", "").length < 2 || this.players.find((player) => player.nickname === data)) {
-          data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
-          ws.send(JSON.stringify(["YOURNAME", data]));
+        const name = data.replaceAll(/\s/g, "").replaceAll(" ", "").length;
+        if (name > 16 || name < 2 || this.players.find((player) => player.nickname === name)) {
+          name = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
+          ws.send(JSON.stringify(["YOURNAME", name]));
         }
         sender.nickname = data;
         this.UpdatePlayerList();
