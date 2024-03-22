@@ -200,20 +200,20 @@ label.Input {
   appearance: none;
   width: 25px;
   height: 25px;
-  background: #ff003b;
+  background: #f1f1f1;
   cursor: pointer;
 }
 #Slider::-moz-range-thumb {
   width: 25px;
   height: 25px;
-  background: #ff003b;
+  background: #f1f1f1;
   cursor: pointer;
 } /* Ei oo linkattu */
 #Slider::-moz-range-track, #Slider::-ms-fill-upper {
   background: #08102d;
 }
 #Slider::-moz-range-progress, #Slider::-ms-fill-lower {
-  background:#f1f1f1;
+  background:#ff003b;
 }
 output {
   position: absolute;
