@@ -1,258 +1,136 @@
-const WebSocket = require("ws");
-
 class GAME {
-  constructor(id, games) {
-    this.id = id;
-    this.maxPlayers = 20;
-    this.startingStack = 1000;
-    this.hasStarted = false;
+  constructor(lobby) {
+    this.lobby = lobby;
     this.timer = 20;
-    this.players = [];
-    this.wss = new WebSocket.WebSocketServer({ noServer: true });
-    this.HandleWSS(this.wss, games);
-
+    this.startingStack = 1000;
     this.loop;
-    this.looparg1;
-    this.looparg2;
-    this.looparg3;
+    this.playerToWin = 1;
+    this.players;
+    this.rounds;
+    this.roundTotal;
+    this.totalPoints;
   }
-  IsFull() { return this.players.length >= this.maxPlayers; }
+  StartGame() {
+    this.lobby.hasStarted = true;
+    this.players = this.lobby.players;
+    this.players.forEach((player) => {
+      player.busted = false;
+      player.pointsWon = this.startingStack;
+    });
+    this.totalPoints = this.players.length * this.startingStack;
+    this.roundTotal = this.players.length * 2 + 2;
+    this.rounds = [];
+    this.lobby.SendToClients(["NOTIFY", "The game has started!"]);
+    
+    this.A();
+    this.loop = setTimeout(() => { this.MainLoop() }, this.timer * 1000) 
 
-  CreatePrizes(amount, totalPoints) {
+  }
+  StopGame() {
+    clearTimeout(this.loop);
+    this.lobby.hasStarted = false;
+    this.rounds = [];
+    let winner;
+    if (this.players.length === 1) {
+      winner = this.players[0].nickname; 
+    } else {
+      winner = this.players.reduce((a, b) => {
+        return a.pointsWon > b.pointsWon ? a : b;
+      }).nickname;
+    }
+
+    this.lobby.SendToClients(["NOTIFY", `Game has ended! The winner is ${winner}`])
+    this.lobby.players.forEach(player => {
+      player.busted = false;
+      player.ready = false; 
+      player.pointsWon = 0;
+      player.pointsLeft = 0;
+      player.startingPoints = 0;
+      player.SetInputs(false);
+    });
+    this.lobby.UpdatePlayerList();
+  }
+  MainLoop() {
+    this.B();
+    this.A();
+    if (this.lobby.hasStarted) {
+      this.loop = setTimeout(() => { this.MainLoop() }, this.timer * 1000) 
+    }
+  }
+  A() {
+    this.players.forEach(player => {
+      player.pointsBid = 0;
+      player.ready = false;
+      player.SetInputs(this.lobby.hasStarted);
+    });
+
+    if (this.rounds.length === 0) {
+      if (this.roundTotal > 2) {
+        this.roundTotal -= 2;
+        this.rounds = this.CreateRounds(this.roundTotal, this.totalPoints)
+        this.players.forEach(player => {
+          player.NewRoundReset(this.lobby.hasStarted); 
+          if (player.busted) {
+            const index = this.players.indexOf(player);
+            this.players.splice(index, 1);
+          }
+        });
+        if (this.players.length < 2) {
+          this.StopGame();
+        } else {
+          this.lobby.UpdatePlayerList();
+          this.lobby.SendToClients(["ROUNDS", this.rounds])
+        }
+
+      } else {
+        this.StopGame();
+      }
+    }
+
+  }
+  B() {
+    const winners = this.SelectWinners();
+    this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winners[0]} with a bid of ${this.players.find(player => player.nickname === winners[0]).pointsBid}!`]);
+    this.lobby.UpdatePlayerList();
+    this.rounds.shift();
+    this.rounds.shift();
+  }
+
+  CreateRounds(amount, totalPoints) {
     const remainder = 1000 % amount;
     const base = (1000 - remainder) / amount;
     const step = Math.floor(40 / amount);
-    let prizes = [];
+    let rounds = [];
     for (let i = 0; i <= amount; i++) {
       if (i === amount / 2) { i++; }
       const permil = base + (step * (i - (amount / 2)));
-      const prize = totalPoints * permil / 1000;
-      prizes.push(prize);
+      const round = totalPoints * permil / 1000;
+      rounds.push(round);
     }
-    prizes[0]+= remainder;
-    return prizes;
+    rounds[rounds.length-1] += remainder;
+    rounds.forEach((round, index) => {
+      rounds[index] = [round, index, this.roundTotal];
+    })
+    return rounds;
   }
 
-  SelectWinners(prize) {
-    const players = this.players.filter((player) => !player.busted);
-    const max = players.reduce((a, b) => {
+  SelectWinners() {
+    const max = this.players.reduce((a, b) => {
       return a.pointsBid > b.pointsBid ? a : b;
     }).pointsBid;
-    const winners = players.filter(player => player.pointsBid === max);
+    const winners = this.players.filter(player => player.pointsBid === max);
     let winnernames = [];
     winners.forEach((winner) => {
-      winner.pointsWon.push(Math.floor(prize / winners.length));
+      winner.pointsWon += Math.floor(this.rounds[0][0] / winners.length);
       winnernames.push(winner.nickname);
     });
     return winnernames;
   }
 
-  ResetMainLoop() {
+  SkipTimer() {
     clearTimeout(this.loop);
     this.MainLoop(this.looparg1, this.looparg2, this.looparg3);
   }
 
-  StartGame() {
-    this.hasStarted = true;
-    this.players.forEach((player) => {
-      player.busted = false;
-      player.pointsWon = [this.startingStack];
-      player.startingPoints = 0;
-      player.pointsBid = 0;
-      player.ready = false;
-    });
-    this.SendToClients(["STARTGAME", this.timer]);
-
-    setTimeout(() => {
-      //A
-      this.players.forEach((player) => { player.NewRoundReset(); });
-      this.UpdatePlayerList();
-      const totalPoints = this.players.length * this.startingStack;
-      const prizes = this.CreatePrizes(this.players.length * 2, totalPoints);
-      this.SendToClients(["PRIZES", prizes]);
-      this.players.forEach((player) => { player.pointsBid = 0; });
-      this.SendToClients(["STARTBIDDING", 0]);
-
-      this.looparg1 = 0;
-      this.looparg2 = prizes;
-      this.looparg3 = totalPoints;
-
-      this.loop = setTimeout(() => {
-        this.MainLoop(0, prizes, totalPoints);
-      }, this.timer * 1000)
-    }, 1000);
-
-  }
-
-  MainLoop(bettingRound, prizes, totalPoints) {
-
-    //B
-    const winners = this.SelectWinners(prizes[bettingRound]);
-    this.SendToClients(["ROUNDWINNER", [winners, Math.floor(prizes[bettingRound] / winners.length), this.players.find(player => player.nickname === winners[0]).pointsBid]]);
-    this.UpdatePlayerList();
-
-    this.players.forEach((player) => { player.pointsLeft -= player.pointsBid; });
-
-    if (bettingRound === prizes.length - 1) { bettingRound = 0; }
-    else { bettingRound++; }
-
-    if (bettingRound === 0) {
-      this.players.forEach((player) => { player.NewRoundReset(); });
-      this.UpdatePlayerList();
-      if (prizes.length > 2) {
-        prizes = this.CreatePrizes(prizes.length - 2, totalPoints);
-        this.SendToClients(["PRIZES", prizes]);
-      } else {
-        prizes = [];
-      }
-    }
-
-    if (this.players.filter(player => !player.busted).length > 1 && prizes.length > 0) {
-      //A
-      this.players.forEach((player) => { player.pointsBid = 0; player.ready = false; });
-      this.SendToClients(["STARTBIDDING", bettingRound]);
-
-      this.looparg1 = bettingRound;
-      this.looparg2 = prizes;
-      this.looparg3 = totalPoints;
-
-      this.loop = setTimeout(() => {
-        this.MainLoop(bettingRound, prizes, totalPoints); 
-      }, this.timer * 1000);
-    } else {
-      this.hasStarted = false;
-
-      const players = this.players.filter((player) => !player.busted);
-      const winner = players.reduce((a, b) => {
-        return a.startingPoints > b.startingPoints ? a : b;
-      });
-      this.SendToClients(["GAMEWINNER", winner.nickname]);
-      this.UpdatePlayerList();
-    }
-  }
-
-  HandleWSS(wss, games) {
-    wss.on("connection", (ws, socket) => {
-      if (this.IsFull() || this.hasStarted) {
-        console.log("Connection denied. Server is full!");
-        socket.destroy();
-      } else {
-        const newPlayer = new PLAYER(ws);
-        this.players.push(newPlayer);
-        if (this.players.length === 1) { newPlayer.admin = true; }
-        this.UpdatePlayerList();
-
-        ws.on("close", () => {
-          console.log("Player left the server");
-          this.players.splice(this.players.findIndex((player) => player === newPlayer), 1);
-          if (this.players.length === 0) {
-            wss.close(() => {
-              const index = games.findIndex(game => game.id === this.id);
-              games.splice(index, 1);
-              console.log(`(${this.id}) was autodeleted`)
-            });
-          } else if (newPlayer.admin) {
-            this.players[0].admin = true;
-          }
-          this.UpdatePlayerList();
-        });
-
-        ws.on("message", (message) => {
-          console.log(`(${this.id}) recieved: ${message}`);
-          const wsmessage = JSON.parse(message);
-          this.OnWsMessage(wsmessage[0], wsmessage[1], ws);
-        });
-
-      }
-    })
-  }
-  SendToClients(data) {
-    console.log(`(${this.id}) sent ${JSON.stringify(data)}`);
-    this.players.forEach((player) => {
-      player.ws.send(JSON.stringify(data));
-    })
-  }
-  UpdatePlayerList() {
-    const playerlist = [];
-    this.players.forEach((player) => {
-      playerlist.push(player.PublicInfo());
-    })
-    this.SendToClients(["PLAYERLIST", playerlist]);
-  }
-
-  OnWsMessage(type, data, ws) {
-    const sender = this.players.find(player => player.ws === ws);
-    switch (type) {
-      case "NICKNAME":
-        let name = data.replaceAll(/\s/g, "").replaceAll(" ", "").length;
-        if (data == null || name > 16 || name < 2 || this.players.find((player) => player.nickname === name)) {
-          name = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
-          ws.send(JSON.stringify(["YOURNAME", name]));
-        }
-        sender.nickname = data;
-        this.UpdatePlayerList();
-        break;
-
-      case "STARTGAME":
-        if (this.players.length > 1 && sender.admin) {
-          this.StartGame();
-        }
-        break;
-
-      case "BID":
-        sender.Bid(data);
-        if (this.players.every((player) => { return (player.busted || player.ready) && this.hasStarted; })) {
-          this.ResetMainLoop();
-        } else {
-          const totalPlayers = this.players.filter(player => !player.busted).length;
-          const playersReady = this.players.filter(player => player.ready).length;
-          this.SendToClients(["READYCOUNT", playersReady + "/" + totalPlayers]);
-        }
-        break;
-    }
-  }
-
-
 }
-class PLAYER {
-  constructor(ws){
-    this.nickname = "guest";
-    this.ws = ws;
-    this.pointsLeft;
-    this.pointsBid;
-    this.startingPoints = 0;
-    this.pointsWon = [];
-    this.admin = false;
-    this.busted = false;
-    this.ready = false;
-  }
-  PublicInfo() {
-    const playerinfo = {
-      nickname: this.nickname,
-      startingPoints: this.startingPoints,
-      pointsWon: this.pointsWon,
-      admin: this.admin,
-      busted: this.busted
-    }
-    return playerinfo;
-  }
-  NewRoundReset() {
-    if (this.pointsWon.length === 0) { this.busted = true; }
-    if (this.busted) { this.startingPoints = 0; }
-    else {
-      this.startingPoints = this.pointsWon.reduce((a, b) => { return a+b; }, 0);
-      this.pointsLeft = this.startingPoints;
-      this.pointsWon = [];
-    }
-  }
-  Bid(amount) {
-    if (this.pointsLeft >= amount && amount > 0) {
-      this.pointsBid = amount;
-    } else {
-      this.pointsBid = 0;
-    }
-    this.ready = true;
-  }
-}
-
 module.exports = GAME;

@@ -1,7 +1,7 @@
 const express = require("express");
 const http = require("http");
 const WebSocket = require("ws");
-const GAME = require("./game");
+const LOBBY = require("./lobby");
 
 let games = [];
 const homews = new WebSocket.WebSocketServer({ noServer: true });
@@ -19,7 +19,6 @@ function UpdateGameList() {
 const app = express();
 const server = http.createServer(app);
 
-app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(express.urlencoded({extended: true}));
 
@@ -29,15 +28,15 @@ app.use((req, res, next) => {
 });
 
 app.get("/home", (req, res) => {
-  res.render("home", { games });
+  res.sendFile("./views/home.html", { root: __dirname });
 });
 
 app.post("/create", (req, res) => {
   const id = req.body.id.replaceAll(/\s/g, "").replaceAll(" ", "");
-  if (games.some(game => game.id === id) || games.length > 20 || id.length < 2 || id.length > 12) {
+  if (games.some(game => game.id === id) || games.length > 20 || id.length < 2 || id.length > 16 || id == null) {
     res.redirect("/home");
   } else {
-    const game = new GAME(id, games);
+    const game = new LOBBY(id, games);
     console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);
@@ -49,7 +48,7 @@ app.get("/game/:id", (req, res) => {
   const id = req.params.id;
   const game = games.find((game) => game.id === id);
   if (game && !game.IsFull() && !game.hasStarted) {
-    res.render("game", game);
+    res.sendFile("./views/game.html", { root: __dirname });
   } else {
     res.redirect("/home");
   }
@@ -69,6 +68,7 @@ server.on("upgrade", (req, socket, head) => {
     UpdateGameList();
   } else {
     homews.handleUpgrade(req, socket, head, (ws) => {});
+    UpdateGameList();
   }
 })
 
