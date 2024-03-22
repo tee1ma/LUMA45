@@ -187,7 +187,6 @@ label.Input {
   appearance: none;
   width: 50%;
   height: 25px;
-  background: #08102d;
   opacity: 0.8;
   -webkit-transition: .2s;
   transition: opacity .2s;
@@ -209,7 +208,7 @@ label.Input {
   height: 25px;
   background: #ff003b;
   cursor: pointer;
-}
+} /* Ei oo linkattu */
 #Slider::-moz-range-track, #Slider::-ms-fill-upper {
   background: #08102d;
 }
