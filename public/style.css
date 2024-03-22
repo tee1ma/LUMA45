@@ -96,8 +96,8 @@ div#createContainer {
 }
 div { /* Fiksaa tämä joskus */
   text-align: center;
-  background-color: white;
-  border: 5px solid #08102d;
+  background-color: #08102d;
+  border: 5px solid white;
   border-radius: 10px;
   padding: 5px;
 }
@@ -107,7 +107,7 @@ p {
 h5 {
   text-transform: uppercase;
   text-decoration: underline;
-  color: #08102d;
+  color: #ff003b;
 }
 
 /* Game */
