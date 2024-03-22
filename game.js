@@ -79,12 +79,15 @@ class GAME {
           this.StopGame();
         } else {
           this.lobby.UpdatePlayerList();
-          this.lobby.SendToClients(["ROUNDS", this.rounds])
+          this.lobby.SendToClients(["ROUNDS", this.rounds]);
         }
 
       } else {
         this.StopGame();
       }
+    } else {
+      this.lobby.UpdatePlayerList();
+      this.lobby.SendToClients(["ROUNDS", this.rounds]);
     }
 
   }
