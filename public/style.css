@@ -208,11 +208,11 @@ label.Input {
   height: 25px;
   background: #f1f1f1;
   cursor: pointer;
-} /* Ei oo linkattu */
-#Slider::-moz-range-track, #Slider::-ms-fill-upper {
+} 
+#Slider::-moz-range-track, #Slider::-webkit-slider-runnable-track { /*Not linked */
   background: #08102d;
 }
-#Slider::-moz-range-progress, #Slider::-ms-fill-lower {
+#Slider::-moz-range-progress, #Slider::-webkit-progress-value {
   background:#ff003b;
 }
 output {
