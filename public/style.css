@@ -103,10 +103,12 @@ div { /* Fiksaa tämä joskus */
 }
 p {
   color: #f1f1f1;
+  font-weight: lighter;
 }
 h5 {
   text-transform: uppercase;
   text-decoration: underline;
+  font-weight: bold;
   color: #ff003b;
 }
 
