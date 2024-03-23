@@ -79,7 +79,7 @@ label, form {
 }
 table#ServerList {
   max-width: 100%;
-  min-width: 30%;
+  min-width: 50%;
   margin-left: auto;
   margin-right: auto;
   background-color: darkgray;
@@ -89,7 +89,7 @@ table#ServerList {
   border-radius: 5px;
 }
 div#createContainer {
-  width: 30%;
+  width: 50%;
   margin-left: auto;
   margin-right: auto;
   background-color: darkcyan;
@@ -137,7 +137,7 @@ table#PlayerList {
   display: flex;
   position: absolute;
   white-space: nowrap;
-  max-width: 45%;
+  max-width: 40%;
   top: calc(100px + 3%);
   bottom: 23%;
   background-color: darkgray;
@@ -151,10 +151,10 @@ div#RoundsContainer {
   display: flex;
   align-items: center;
   position: absolute;
-  width: 55%;
+  width: 60%;
   top: 100px;
   bottom: 20%;
-  left: 45%;
+  left: 40%;
   overflow-x: auto;
   white-space: nowrap;
 }

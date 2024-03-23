@@ -123,7 +123,7 @@ class GAME {
 
     const sortedPlayers = Array.from(new Set(this.players.map(player => player["pointsBid"])));
     sortedPlayers.sort((a,b) => b - a);
-    const n = rounds[0][3];
+    const n = this.rounds[0][3];
     const nthLargestBid = sortedPlayers[n];
 
     const winners = this.players.filter(player => player.pointsBid === nthLargestBid && !player.busted);
