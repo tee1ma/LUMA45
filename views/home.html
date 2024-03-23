@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutBid</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/homeclient.js" defer></script>
+  </head> 
+
+  <body>
+    <header>
+      <img id="Logo" src="/favicon.ico">
+      <h1>OutBid</h1>
+    </header>
+
+    <table id="ServerList"></table>
+
+    <div id="createContainer">
+      <label>Create new game:</label>
+      <form action="/create" method="post">
+        <input type="text" name="id" placeholder="lobby name">
+        <select name="mode">
+          <option value="standard">standard</option>
+          <option value="chaos">chaos</option>
+        </select>
+        <input type="submit" value="Create">
+      </form>
+    </div>
+
+    <div id="Rules">
+      <h5>Ohjeet</h5>
+      <br>
+      <p>
+        Yksi pelaaja tekee pelin. Pelin tekijästä tulee admin.
+        Muut pelaajat liittyvät adminin tekemään peliin ja näin pelin voi aloittaa.
+      </p>
+      <br>
+      <h5>Pelin alku</h5>
+      <p>
+        Jokaisella pelaajalla on 1000 pistettä. 
+        Jokaisella kierroksella pelaajat panostavat valitsemansa määrän yhteen sijoituskohteeseen.
+        Eniten sijoittanut voittaa kyseisen sijoituskohteen itselleen. 
+        Hankituista sijoituskohteista saa pisteitä seuraavalle kierrokselle. 
+        Sijoituskohteiden määrä kierroksessa pienentyy pelin edettäessä. 
+        Tavoitteena on tiputtaa muut pelaajat pois.
+      </p>
+      <br>
+      <h5>Peli päättyy</h5>
+      <br>
+      <p>
+        Peli päättyy silloin, kun kaikki kierrokset on pelattu tai jäljellä on enään yksi pelaaja.
+        Kierrosten määrä riippuu pelaajien määrästä.
+      </p>
+      <br>
+      <p>
+        Häviät pelin, jos kuluneen kierroksen loputtua sinulla ei ole enään pisteitä, joita panostaa.
+      </p>
+    </div>
+  </body>
+</html>
+

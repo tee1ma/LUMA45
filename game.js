@@ -1,19 +1,19 @@
 class GAME {
-  constructor(lobby) {
+  constructor(lobby, mode) {
     this.lobby = lobby;
+    this.mode = mode;
     this.timer = 20;
     this.startingStack = 1000;
     this.loop;
     this.playerToWin = 1;
-    this.players;
+    this.players = this.lobby.players;
     this.rounds;
     this.roundTotal;
     this.totalPoints;
   }
   StartGame() {
     this.lobby.hasStarted = true;
-    this.players = this.lobby.players;
-    this.players.forEach((player) => {
+    this.players.forEach(player => {
       player.busted = false;
       player.pointsWon = this.startingStack;
     });
@@ -31,7 +31,7 @@ class GAME {
     this.lobby.hasStarted = false;
     this.rounds = [];
     let winner;
-    if (this.players.length === 1) {
+    if (this.PlayersLeft() === 1) {
       winner = this.players[0].nickname; 
     } else {
       winner = this.players.reduce((a, b) => {
@@ -39,16 +39,18 @@ class GAME {
       }).nickname;
     }
 
-    this.lobby.SendToClients(["NOTIFY", `Game has ended! The winner is ${winner}`])
-    this.lobby.players.forEach(player => {
-      player.busted = false;
-      player.ready = false; 
-      player.pointsWon = 0;
-      player.pointsLeft = 0;
-      player.startingPoints = 0;
-      player.SetInputs(false);
+    this.lobby.SendToClients(["ALERT", `Game has ended! The winner is ${winner}`])
+    setTimeout(() => {
+      this.players.forEach(player => {
+        player.busted = false;
+        player.ready = false; 
+        player.pointsWon = 0;
+        player.pointsLeft = 0;
+        player.startingPoints = 0;
+        player.SetInputs(false);
+        this.lobby.UpdatePlayerList();
+      }, 3000);
     });
-    this.lobby.UpdatePlayerList();
   }
   MainLoop() {
     this.B();
@@ -58,6 +60,7 @@ class GAME {
     }
   }
   A() {
+
     this.players.forEach(player => {
       player.pointsBid = 0;
       player.ready = false;
@@ -70,12 +73,8 @@ class GAME {
         this.rounds = this.CreateRounds(this.roundTotal, this.totalPoints)
         this.players.forEach(player => {
           player.NewRoundReset(this.lobby.hasStarted); 
-          if (player.busted) {
-            const index = this.players.indexOf(player);
-            this.players.splice(index, 1);
-          }
         });
-        if (this.players.length < 2) {
+        if (this.PlayersLeft() < 2) {
           this.StopGame();
         } else {
           this.lobby.UpdatePlayerList();
@@ -96,7 +95,6 @@ class GAME {
     this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winners[0]} with a bid of ${this.players.find(player => player.nickname === winners[0]).pointsBid}!`]);
     this.lobby.UpdatePlayerList();
     this.rounds.shift();
-    this.rounds.shift();
   }
 
   CreateRounds(amount, totalPoints) {
@@ -112,16 +110,23 @@ class GAME {
     }
     rounds[rounds.length-1] += remainder;
     rounds.forEach((round, index) => {
-      rounds[index] = [round, index, this.roundTotal];
+      let n = 0; 
+      if (this.mode === "chaos") {
+        n = Math.floor(Math.random() * Math.floor(this.PlayersLeft() / 2));  
+      }
+      rounds[index] = [round, index, this.roundTotal, n];
     })
     return rounds;
   }
 
   SelectWinners() {
-    const max = this.players.reduce((a, b) => {
-      return a.pointsBid > b.pointsBid ? a : b;
-    }).pointsBid;
-    const winners = this.players.filter(player => player.pointsBid === max);
+
+    const sortedPlayers = Array.from(new Set(this.players.map(player => player["pointsBid"])));
+    sortedPlayers.sort((a,b) => b - a);
+    const n = rounds[0][3];
+    const nthLargestBid = sortedPlayers[n];
+
+    const winners = this.players.filter(player => player.pointsBid === nthLargestBid && !player.busted);
     let winnernames = [];
     winners.forEach((winner) => {
       winner.pointsWon += Math.floor(this.rounds[0][0] / winners.length);
@@ -134,6 +139,8 @@ class GAME {
     clearTimeout(this.loop);
     this.MainLoop(this.looparg1, this.looparg2, this.looparg3);
   }
+
+  PlayersLeft() { return this.players.filter(player => !player.busted).length; }
 
 }
 module.exports = GAME;

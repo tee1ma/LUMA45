@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OutBid</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="/gameclient.js" defer></script>
+  </head> 
+
+  <body>
+    <header>
+      <a href="/home">
+        <img id="Logo" src="/favicon.ico">
+      </a>
+      <h1>OutBid</h1>
+    </header>
+
+    <progress value="0" max="200"></progress>
+
+    <table id="PlayerList"></table>
+
+    <div id="RoundsContainer"></div>
+
+    <div id="InputsContainer">
+      <button id="Start" onclick="StartGame()">Start Game</button> 
+      <label for="Slider" id="Current" class="Input">0</label>
+      <output>0</output>
+      <input type="range" id="Slider" value="0" min="0" max="1000" oninput="this.previousElementSibling.value = this.value">
+      <label for="Slider" id="Max" class="Input">1000</label>
+      <button id="Bid" onclick="Bid()">Bid</button>
+    </div>
+
+    <div id="Notification"></div>
+  </body>
+</html>
+

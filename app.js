@@ -33,10 +33,11 @@ app.get("/home", (req, res) => {
 
 app.post("/create", (req, res) => {
   const id = req.body.id.replaceAll(/\s/g, "").replaceAll(" ", "");
+  const mode = req.body.mode;
   if (games.some(game => game.id === id) || games.length > 20 || id.length < 2 || id.length > 16 || id == null) {
     res.redirect("/home");
   } else {
-    const game = new LOBBY(id, games);
+    const game = new LOBBY(id, mode, games);
     console.log(`New game (${game.id}) created`);
     games.push(game);
     res.redirect("/game/" + game.id);

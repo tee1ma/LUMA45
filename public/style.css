@@ -103,12 +103,12 @@ div#createContainer {
   width: 100%;
   height: 100%;
 }
-div { /* Fiksaa tämä joskus */
+div#Rules {
   text-align: center;
   background-color: #08102d;
   border: 5px solid white;
   border-radius: 10px;
-  padding: 5px;
+  padding: 20px;
 }
 p {
   color: #f1f1f1;
@@ -137,7 +137,7 @@ table#PlayerList {
   display: flex;
   position: absolute;
   white-space: nowrap;
-  max-width: 35%;
+  max-width: 45%;
   top: calc(100px + 3%);
   bottom: 23%;
   background-color: darkgray;
@@ -151,10 +151,10 @@ div#RoundsContainer {
   display: flex;
   align-items: center;
   position: absolute;
-  width: 65%;
+  width: 55%;
   top: 100px;
   bottom: 20%;
-  left: 35%;
+  left: 45%;
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -165,6 +165,12 @@ span {
   margin: 5px;
   border: 5px solid black;
   border-radius: 20px;
+}
+span#CurrentRound {
+  background-color: yellow;
+  padding: 30px;
+  margin: 20px;
+  border-width: 10px;
 }
 div#InputsContainer {
   display: flex;
@@ -211,9 +217,11 @@ label.Input {
 } 
 #Slider::-moz-range-track, #Slider::-webkit-slider-runnable-track { /*Not linked */
   background: #08102d;
+  height: 20px;
 }
 #Slider::-moz-range-progress, #Slider::-webkit-progress-value {
   background:#ff003b;
+  height: 20px;
 }
 output {
   position: absolute;
@@ -235,4 +243,6 @@ output {
   right: 0;
   margin: auto;
   text-align: center;
+  visibility: hidden;
+  background-color: whitesmoke;
 }
