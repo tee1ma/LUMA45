@@ -32,7 +32,9 @@ class PLAYER {
     }
     td4.innerText = this.pointsWon.toString();
     if (this.busted) {
-      tr.style.backgroundColor = "red";
+      tr.style.backgroundColor = "#ff003b";
+    } else {
+      tr.style.backgroundColor = "#2A2D38";
     }
     if (this.me) {
       td1.style.border = "5px solid black";
