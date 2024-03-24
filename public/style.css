@@ -223,7 +223,6 @@ label.Input {
   width: 25px;
   height: 25px;
   background: #f1f1f1;
-  overflow: hidden;
   cursor: pointer;
 }
 #Slider::-moz-range-thumb {
@@ -232,16 +231,12 @@ label.Input {
   background: #f1f1f1;
   cursor: pointer;
 } 
-#Slider::-moz-range-track {
+#Slider::-moz-range-track, #Slider::-webkit-slider-runnable-track { /*Not linked */
   background: #08102d;
   height: 20px;
 }
-#Slider::-moz-range-progress {
+#Slider::-moz-range-progress, #Slider::-webkit-progress-value {
   background:#ff003b;
-  height: 20px;
-}
-#Slider::-webkit-slider-runnable-track {
-  background: #08102d;
   height: 20px;
 }
 output {
