@@ -35,14 +35,26 @@ class PLAYER {
       td3.appendChild(checkmarkImg);
     }
     td4.innerText = this.pointsWon.toString();
-    if (this.busted) {
-      tr.style.backgroundColor = "#ff003b";
-    } else {
-      tr.style.backgroundColor = "lightgray";
+
+    let color;
+    switch (true) {
+      case (this.busted && this.me):
+        color = "#ff668a"
+        break;
+      case (this.busted && !this.me):
+        color = "#ff003b"
+        break;
+      case (!this.busted && !this.me):
+        color = "#2A2D38"
+        break;
+      case (!this.busted && this.me):
+        color = "#4D5266"
+        break;
+      default:
+        color = "#2A2D38"
+        break;
     }
-    if (this.me) {
-      td1.style.border = "5px solid black";
-    }
+    tr.style.backgroundColor = color;
   }
 }
 
