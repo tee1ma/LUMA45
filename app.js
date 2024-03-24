@@ -29,6 +29,7 @@ app.use((req, res, next) => {
 
 app.get("/home", (req, res) => {
   res.sendFile("./views/home.html", { root: __dirname });
+  UpdateGameList();
 });
 
 app.post("/create", (req, res) => {
