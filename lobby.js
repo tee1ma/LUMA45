@@ -67,11 +67,12 @@ class LOBBY {
     const sender = this.players.find(player => player.ws === ws);
     switch (type) {
       case "NICKNAME":
-        let name = data.replaceAll(/\s/g, "").replaceAll(" ", "");
-        if (data == null || name.length > 16 || name.length < 2 || this.players.find((player) => player.nickname === name)) { name = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
-          ws.send(JSON.stringify(["YOURNAME", name]));
+        if (data) { data = data.replaceAll(/\s/g, "").replaceAll(" ", ""); }
+        if (data == null || data.length > 16 || data.length < 2 || this.players.find((player) => player.nickname === data)) { 
+          data = "guest_" + (1000 + Math.floor(Math.random() * 8999)).toString();
+          ws.send(JSON.stringify(["YOURNAME", data]));
         }
-        sender.nickname = name;
+        sender.nickname = data;
         this.UpdatePlayerList();
         break;
 
