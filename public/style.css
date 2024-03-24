@@ -48,7 +48,7 @@ h1 {
   line-height: 64px;
   color: #ff003b;
   font-weight: bold;
-  text-shadow: -2px -2px #f1f1f1, 2px 2px #f1f1f1,2px -2px #f1f1f1,-2px 2px #f1f1f1, 0 0 10px black;
+  text-shadow: -2px -2px #08102d, 2px 2px black,2px -2px black,-2px 2px #08102d, 0 0 10px black;
 }
 td {
   padding: 3px;
@@ -176,6 +176,7 @@ span {
   border: 5px solid #f1f1f1;
   border-radius: 20px;
   text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 span#CurrentRound {
   background-color: #ff003b;
