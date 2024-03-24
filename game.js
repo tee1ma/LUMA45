@@ -123,8 +123,8 @@ class GAME {
 
   SelectWinners() {
 
-    const sortedPlayers = Array.from(new Set(this.players.map(player => player["pointsBid"])));
-    sortedPlayers.sort((a,b) => b - a);
+    const sortedValues = this.players.map(player => player.pointsBid);
+    sortedValues.sort((a,b) => b - a);
     const n = this.rounds[0][3];
     const nthLargestBid = sortedPlayers[n];
 
@@ -138,7 +138,7 @@ class GAME {
 
   SkipTimer() {
     clearTimeout(this.loop);
-    this.MainLoop(this.looparg1, this.looparg2, this.looparg3);
+    this.MainLoop();
   }
 
   PlayersLeft() { return this.players.filter(player => !player.busted).length; }
