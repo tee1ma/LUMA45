@@ -122,11 +122,10 @@ class GAME {
   }
 
   SelectWinners() {
-
     const sortedValues = this.players.map(player => player.pointsBid);
     sortedValues.sort((a,b) => b - a);
     const n = this.rounds[0][3];
-    const nthLargestBid = sortedPlayers[n];
+    const nthLargestBid = sortedValues[n];
 
     const winners = this.players.filter(player => player.pointsBid === nthLargestBid && !player.busted);
     winners.forEach(winner => {
