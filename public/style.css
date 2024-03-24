@@ -198,7 +198,7 @@ div#InputsContainer {
   width: 100%;
 }
 button#Start, button#Bid {
-  height: 100%;
+  height: 80%;
   width: 15%;
 }
 label.Input {
