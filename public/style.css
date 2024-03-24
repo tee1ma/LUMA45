@@ -48,7 +48,7 @@ h1 {
   line-height: 64px;
   color: #ff003b;
   font-weight: bold;
-  text-shadow: -1px -1px #f1f1f1, 1px 1px #f1f1f1;
+  text-shadow: -2px -2px #f1f1f1, 2px 2px #f1f1f1, 0 0 5px black;
 }
 td {
   padding: 3px;
