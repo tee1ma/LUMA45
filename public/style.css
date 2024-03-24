@@ -113,12 +113,14 @@ div#Rules {
 }
 p {
   color: #f1f1f1;
+  font-size: 20px;
   font-weight: lighter;
 }
 h5 {
   text-transform: uppercase;
   text-decoration: underline;
   font-weight: bold;
+  font-size: 24px;
   color: #ff003b;
 }
 
