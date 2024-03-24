@@ -34,7 +34,7 @@ class PLAYER {
     if (this.busted) {
       tr.style.backgroundColor = "#ff003b";
     } else {
-      tr.style.backgroundColor = "#2A2D38";
+      tr.style.backgroundColor = "lightgray";
     }
     if (this.me) {
       td1.style.border = "5px solid black";
