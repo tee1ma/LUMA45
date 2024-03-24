@@ -23,12 +23,16 @@ class PLAYER {
     const td3 = tr.insertCell(3);
     const td4 = tr.insertCell(3);
     if (this.admin) {
-      td0.innerText = "👑";
+      const adminImg = document.getElementById("admin").cloneNode(true);
+      adminImg.removeAttribute("hidden");
+      td0.appendChild(adminImg);
     }
     td1.innerText = this.name;
     td2.innerText = this.startingPoints.toString();
     if (this.ready) {
-      td3.innerText = "✓";
+      const checkmarkImg = document.getElementById("checkmark").cloneNode(true);
+      checkmarkImg.removeAttribute("hidden");
+      td3.appendChild(checkmarkImg);
     }
     td4.innerText = this.pointsWon.toString();
     if (this.busted) {

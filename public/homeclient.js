@@ -37,7 +37,8 @@ function UpdateGameList(games) {
       a.href = "/game/" + game[0];
       const join = document.createElement("button");
       join.innerText = "Join";
-      tr.appendChild(document.createElement("td").appendChild(a.appendChild(join)));
+      a.appendChild(join);
+      tr.appendChild(document.createElement("td").appendChild(a));
     }
   });  
 }
