@@ -231,11 +231,15 @@ label.Input {
   background: #f1f1f1;
   cursor: pointer;
 } 
-#Slider::-moz-range-track, #Slider::-webkit-slider-runnable-track { /*Not linked */
+#Slider::-moz-range-track { /*Not linked */
   background: #08102d;
   height: 20px;
 }
-#Slider::-moz-range-progress, #Slider::-webkit-progress-value {
+#Slider::-webkit-slider-runnable-track { /*Not linked */
+  background: #08102d;
+  height: 20px;
+}
+#Slider::-moz-range-progress {
   background:#ff003b;
   height: 20px;
 }
