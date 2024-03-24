@@ -22,7 +22,7 @@ img#Logo {
   transform: scale(0.95);
 }
 body {
-  font-family: 'Press Start 2P', sans-serif;
+  font-family: 'VCR OSD Mono', sans-serif;
   background-color: #08102d;
   image-rendering: pixelated;
   background-image: url("/backpic.png");
@@ -30,7 +30,7 @@ body {
   background-repeat: repeat;
 }
 @font-face {
-  font-family: 'Press Start 2P';
+  font-family: 'VCR OSD Mono';
   src: url('/fonttibeibi.ttf');
 }
 header {
