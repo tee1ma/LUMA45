@@ -252,5 +252,7 @@ output {
   margin: auto;
   text-align: center;
   visibility: hidden;
-  background-color: whitesmoke;
+  -webkit-text-stroke: 1px white;
+  -webkit-text-fill-color: black;
+  -webkit-text-stroke-width: 5px;
 }
