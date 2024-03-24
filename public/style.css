@@ -89,7 +89,7 @@ table#ServerList {
   background-color: #08102d;
   text-align: center;
   padding: 5px;
-  border: 5px solid black;
+  border: 5px solid #f1f1f1;
   border-radius: 5px;
   color: #f1f1f1;
 }
@@ -150,12 +150,13 @@ table#PlayerList {
   max-width: 40%;
   top: calc(100px + 3%);
   bottom: 23%;
-  background-color: darkgray;
+  background-color: #08102d;
   text-align: center;
   padding: 5px;
-  border: 5px solid black;
+  border: 5px solid #f1f1f1;
   border-radius: 5px;
   overflow: auto;
+  color: #f1f1f1; /*Korja jos menee rikki */
 }
 div#RoundsContainer {
   display: flex;
