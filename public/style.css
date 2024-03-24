@@ -82,7 +82,7 @@ table#ServerList {
   min-width: 50%;
   margin-left: auto;
   margin-right: auto;
-  background-color: darkgray;
+  background-color: #08102d;
   text-align: center;
   padding: 5px;
   border: 5px solid black;
@@ -164,21 +164,24 @@ div#RoundsContainer {
 }
 span {
   display: inline-block;
-  background-color: grey;
+  background-color: #08102d;
   padding: 10px;
   margin: 5px;
-  border: 5px solid black;
+  border: 5px solid #f1f1f1;
   border-radius: 20px;
   text-align: center;
 }
 span#CurrentRound {
-  background-color: yellow;
+  background-color: #ff003b;
   padding: 30px;
   margin: 20px;
   border-width: 10px;
 }
 h2, h3, h6 {
   margin: 4px;
+  color: #f1f1f1;
+  font-weight: bold;
+  font-size: 18px;
 }
 div#InputsContainer {
   display: flex;
