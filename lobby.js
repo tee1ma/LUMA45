@@ -6,7 +6,6 @@ class LOBBY {
     this.id = id;
     this.maxPlayers = 20;
     this.hasStarted = false;
-    this.timer = 20;
     this.players = [];
     this.wss = new WebSocket.WebSocketServer({ noServer: true });
     this.HandleWSS(this.wss, games)
@@ -26,13 +25,13 @@ class LOBBY {
         newPlayer.SetInputs(this.hasStarted);
 
         ws.on("close", () => {
-          console.log("Player left the server");
-          this.players.splice(this.players.findIndex((player) => player === newPlayer), 1);
+          console.log(`(${this.id}) ${newPlayer.nickname} left from server`);
+          this.players.splice(this.players.findIndex(player => player === newPlayer), 1);
           if (this.players.length === 0) {
             wss.close(() => {
               const index = games.findIndex(game => game.id === this.id);
               games.splice(index, 1);
-              console.log(`(${this.id}) was autodeleted`)
+              console.log(`(${this.id}) was autodeleted`);
             });
           } else if (newPlayer.admin) {
             this.players[0].admin = true;
@@ -41,7 +40,7 @@ class LOBBY {
           this.UpdatePlayerList();
         });
 
-        ws.on("message", (message) => {
+        ws.on("message", message => {
           console.log(`(${this.id}) recieved: ${message}`);
           const wsmessage = JSON.parse(message);
           this.OnWsMessage(wsmessage[0], wsmessage[1], ws);
@@ -77,7 +76,7 @@ class LOBBY {
         break;
 
       case "STARTGAME":
-        if (sender.admin && !this.hasStarted) {
+        if (sender.admin && !this.hasStarted && this.players.length > 1) {
           this.game.StartGame();
         }
         break;

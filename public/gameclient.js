@@ -54,11 +54,11 @@ function CreateRound(value, index, total, n) {
 
   const description = document.createElement("h6");
   let nth;
-  if (n === 1) { nth = "" }
-  else if (n === 2) { nth = "2nd"}
-  else if (n === 3) { nth = "3rd"}
-  else { nth = n + "th"}
-  description.innerText = nth + "largest bid wins!";
+  if (n === 1) { nth = "L" }
+  else if (n === 2) { nth = "2nd l"}
+  else if (n === 3) { nth = "3rd l"}
+  else { nth = n + "th l"}
+  description.innerText = nth + "argest bid wins!";
   roundBox.appendChild(description);
 
   return roundBox;

@@ -91,8 +91,8 @@ class GAME {
 
   }
   B() {
-    const winners = this.SelectWinners();
-    this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winners[0]} with a bid of ${this.players.find(player => player.nickname === winners[0]).pointsBid}!`]);
+    const winner = this.SelectWinners();
+    this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winner.nickname} with a bid of ${winner.pointsBid}!`]);
     this.lobby.UpdatePlayerList();
     this.rounds.shift();
   }
@@ -127,12 +127,11 @@ class GAME {
     const nthLargestBid = sortedPlayers[n];
 
     const winners = this.players.filter(player => player.pointsBid === nthLargestBid && !player.busted);
-    let winnernames = [];
-    winners.forEach((winner) => {
+    winners.forEach(winner => {
       winner.pointsWon += Math.floor(this.rounds[0][0] / winners.length);
-      winnernames.push(winner.nickname);
     });
-    return winnernames;
+    
+    return winners[0];
   }
 
   SkipTimer() {
