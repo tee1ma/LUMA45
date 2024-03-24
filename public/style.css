@@ -165,12 +165,16 @@ span {
   margin: 5px;
   border: 5px solid black;
   border-radius: 20px;
+  text-align: center;
 }
 span#CurrentRound {
   background-color: yellow;
   padding: 30px;
   margin: 20px;
   border-width: 10px;
+}
+h2, h3, h6 {
+  margin: 4px;
 }
 div#InputsContainer {
   display: flex;
