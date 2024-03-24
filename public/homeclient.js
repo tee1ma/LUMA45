@@ -24,17 +24,20 @@ function UpdateGameList(games) {
     if (!game[2]) {
       const tr = document.createElement("tr");
       table.appendChild(tr);
+
       const name = document.createElement("td");
       name.innerText = game[0];
       tr.appendChild(name);
+
       const players = document.createElement("td");
       players.innerText = game[1];
       tr.appendChild(players);
-      const link = document.createElement("a");
-      link.innerText = "Join";
-      link.href = "/game/" + game[0];
-      tr.appendChild(document.createElement("td").appendChild(link));
 
+      const a = document.createElement("a");
+      a.href = "/game/" + game[0];
+      const join = document.createElement("button");
+      join.innerText = "Join";
+      tr.appendChild(document.createElement("td").appendChild(a.appendChild(join)));
     }
   });  
 }
