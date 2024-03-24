@@ -29,6 +29,7 @@ class LOBBY {
           this.players.splice(this.players.findIndex(player => player === newPlayer), 1);
           if (this.players.length === 0) {
             wss.close(() => {
+              this.game = null;
               const index = games.findIndex(game => game.id === this.id);
               games.splice(index, 1);
               console.log(`(${this.id}) was autodeleted`);
