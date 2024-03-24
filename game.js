@@ -32,7 +32,7 @@ class GAME {
     this.rounds = [];
     let winner;
     if (this.PlayersLeft() === 1) {
-      winner = this.players[0].nickname; 
+      winner = this.players.find(player => !player.busted);
     } else {
       winner = this.players.reduce((a, b) => {
         return a.pointsWon > b.pointsWon ? a : b;
@@ -70,13 +70,13 @@ class GAME {
     if (this.rounds.length === 0) {
       if (this.roundTotal > 2) {
         this.roundTotal -= 2;
-        this.rounds = this.CreateRounds(this.roundTotal, this.totalPoints)
         this.players.forEach(player => {
           player.NewRoundReset(this.lobby.hasStarted); 
         });
         if (this.PlayersLeft() < 2) {
           this.StopGame();
         } else {
+          this.rounds = this.CreateRounds(this.roundTotal, this.totalPoints)
           this.lobby.UpdatePlayerList();
           this.lobby.SendToClients(["ROUNDS", this.rounds]);
         }
@@ -92,9 +92,11 @@ class GAME {
   }
   B() {
     const winner = this.SelectWinners();
-    this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winner.nickname} with a bid of ${winner.pointsBid}!`]);
-    this.lobby.UpdatePlayerList();
-    this.rounds.shift();
+    if (winner) {
+      this.lobby.SendToClients(["NOTIFY", `${this.rounds[0][0]} was won by ${winner.nickname} with a bid of ${winner.pointsBid}!`]);
+      this.lobby.UpdatePlayerList();
+      this.rounds.shift();
+    }
   }
 
   CreateRounds(amount, totalPoints) {
@@ -130,7 +132,7 @@ class GAME {
     winners.forEach(winner => {
       winner.pointsWon += Math.floor(this.rounds[0][0] / winners.length);
     });
-    
+
     return winners[0];
   }
 
