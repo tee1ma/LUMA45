@@ -85,7 +85,7 @@ class LOBBY {
       case "BID":
         if (this.hasStarted) {
           sender.Bid(data, this.hasStarted);
-          if (!this.players.some(player => !player.ready && !player.busted)) {
+          if (!this.players.some(player => !player.ready && !player.busted && player.pointsLeft > 0)) {
             this.game.SkipTimer();
           };
           this.UpdatePlayerList();
